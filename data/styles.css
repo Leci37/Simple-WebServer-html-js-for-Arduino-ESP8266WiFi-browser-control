@@ -1,0 +1,14 @@
+html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}
+.button { background-color: #195B6A; border: none; color: white; padding: 16px 40px;  font-size: 2rem;  border-radius: .5rem;
+text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}
+.button2 {background-color: #77878A;}
+ :root {  --first-color: hsl(231, 44%, 56%);  --first-color-alt: hsl(231, 44%, 51%);  --text-color: hsl(231, 12%, 98%);}.button2{  border: none;  outline: none;  position: relative;  background-color: var(--first-color);  color: var(--text-color);  font-size: 2rem;  border-radius: .5rem;  box-shadow: 0 18px 40px hsla(231, 56%, 56%, .3);  overflow: hidden;  cursor: wait;}.button2::before {  content: '';  position: absolute;  top: 0;  left: 0;  width: 150%;  height: 100%;  background: repeating-linear-gradient(60deg,               transparent,               transparent 0.75rem,               var(--first-color-alt) 0.75rem,               var(--first-color-alt) 1.5rem);  animation: load 1s infinite linear;}.button__text {  position: relative;}@keyframes load {  0% {    transform: translateX(0);  }  100% {    transform: translateX(-1.75rem);  }}
+button:disabled, button[disabled]{ border: 1px solid #999999;background-color: #cccccc;color: #666666;}
+
+body {max-width: 600px; margin:0px auto; padding-bottom: 12px;}
+.switch {position: relative; display: inline-block; width: 60px; height: 34px} 
+.switch input {display: none}
+.slider {position: absolute; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; border-radius: 34px}
+.slider:before {position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: #fff; -webkit-transition: .4s; transition: .4s; border-radius: 15px}
+input:checked+.slider {background-color: #2196F3}
+input:checked+.slider:before {-webkit-transform: translateX(26px); -ms-transform: translateX(26px); transform: translateX(26px)}

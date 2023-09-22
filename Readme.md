@@ -13,7 +13,7 @@ ESP8266 will start to generate a WiFi connection, you must connect to the WiFi n
 
 ` `window will appear:
 
-<img src="Aspose.Words.3878dd68-a1b3-4146-bca2-6530efdef114.001.jpeg" height="380"><img src="ESP8266-12E-NodeMCU-Development-Board-pinout.jpg" height="380">
+<img src="Aspose.Words.3878dd68-a1b3-4146-bca2-6530efdef114.001.jpeg" height="520" align="left">               <img src="ESP8266-12E-NodeMCU-Development-Board-pinout.jpg" height="360" align="right">
 
 
 
@@ -29,12 +29,13 @@ const int LED\_BUILTIN\_16 = 16;
 const int PIN\_INPUT\_TAPA\_12 = 12;
 const int PIN\_INPUT\_CARRO\_14 = 14;
 ```
+<br/><br/><br/>
 The `index_html.hpp` file contains the HTML-JS and the web page. Ignore the code associated with the `// MAPS FUNTIONS` tag (I wanted to detect where the agricultural product fell). 
 
 Video example of use: [https://www.youtube.com/shorts/0RRijg92TqM ](https://www.youtube.com/shorts/0RRijg92TqM)
 
 
-<br />
+<br /><br/>
 
 **ESPAÑOL**
 
@@ -50,8 +51,7 @@ ESP8266 empezara a generar una conexión WiFi, se debe conectar a la red WiFi qu
 
 ` `aparecerá la ventana:
 
-
-<img src="Aspose.Words.3878dd68-a1b3-4146-bca2-6530efdef114.001.jpeg" height="380"><img src="ESP8266-12E-NodeMCU-Development-Board-pinout.jpg" height="380">
+<img src="Aspose.Words.3878dd68-a1b3-4146-bca2-6530efdef114.001.jpeg" height="520" align="left">               <img src="ESP8266-12E-NodeMCU-Development-Board-pinout.jpg" height="360" align="right">
 
 La aplicación muestra un cronometro debajo de la pantalla, para saber si esta la conexión en tiempo real, también dentro de la combinación de código JS-arduino hay multi hilos 
 
@@ -64,9 +64,9 @@ const int LED\_BUILTIN\_16 = 16;
 const int PIN\_INPUT\_TAPA\_12 = 12;
 const int PIN\_INPUT\_CARRO\_14 = 14;
 ```
-
+<br/><br/><br/>
 En el fichero  `index_html.hpp` se encuentra el HTML-JS y la página web. Ignorar el código asociado con la etiqueta `// MAPS FUNTIONS` (quería detectar donde cayó el producto agrícola) 
-
+<br/>
 Video de ejemplo de uso: <https://www.youtube.com/shorts/0RRijg92TqM> 
 
 

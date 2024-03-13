@@ -1,5 +1,5 @@
-﻿
-**ENGLISH**  (tambien en **español**) 
+
+**ENGLISH**  (tambien en **español**)    <img src="https://raw.githubusercontent.com/Leci37/Strategy-stock-Random-Forest-ML-sklearn-TraderView/main/img/give_a_start-RB.png" alt="give_a_start.jpg" width="72" />  ﻿ 
 
 Objective: to control and monitor by means of an ESP8266 board programmed in Arduino (.ino) language a small agro-industrial process. In other words, an open source programmable automaton.
 

@@ -14,6 +14,12 @@
   placa acompañan la partida.
 - La placa cuenta **palmadas** (`sound.claps`) mirando cada lectura del
   micrófono, y tiene una orden pequeña, `/api/input`, para jugar sin retraso.
+- El README, como los de la plataforma: pieza a pieza, cada una con su
+  captura y lo que se monta. Capturas nuevas (1280 px, el móvil a 390, PNG de
+  256 colores) que rehace `tools/capturas.py`.
+- [docs/PLATAFORMA.md](docs/PLATAFORMA.md): la propuesta para meter el
+  Laboratorio en tuisku (las placas como máquinas del núcleo, el colegio como
+  empresa, la IA que escribe programas de bloques).
 
 ## 1.0.0 — 2026-10-05
 

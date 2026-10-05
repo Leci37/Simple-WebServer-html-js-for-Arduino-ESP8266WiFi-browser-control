@@ -1,8 +1,10 @@
 # CLAUDE.md — Laboratorio de inventos
 
-Firmware para NodeMCU (ESP8266) y su web para niños: semáforo, sonómetro y
-detector de fantasmas, con un editor de bloques tipo Scratch. Lee el
-[README](README.md); para crecer, [docs/NUEVO_INVENTO.md](docs/NUEVO_INVENTO.md).
+Firmware para NodeMCU (ESP8266) y su web para niños: semáforo, sonómetro,
+detector de fantasmas y el juego ¡Salta, Chispa!, con un editor de bloques
+tipo Scratch. Lee el [README](README.md); para crecer,
+[docs/NUEVO_INVENTO.md](docs/NUEVO_INVENTO.md); para la plataforma zlecitool,
+[docs/PLATAFORMA.md](docs/PLATAFORMA.md).
 
 ## Reglas
 
@@ -27,7 +29,10 @@ detector de fantasmas, con un editor de bloques tipo Scratch. Lee el
    viejas (JavaScript sencillo, sin `?.` ni `??`).
 8. **Idioma:** documentación y comentarios en español; nombres en el código y en
    la API, en inglés. Los comentarios explican **por qué**, no qué.
-9. **Versión y CHANGELOG van juntos:** `LAB_VERSION` en `laboratorio/config.h`
+9. **Lo que se ve, con su captura.** El README va pieza a pieza, cada una con
+   la suya; al cambiar algo que se ve, `python tools/capturas.py` y mirar
+   cada imagen antes de subirla.
+10. **Versión y CHANGELOG van juntos:** `LAB_VERSION` en `laboratorio/config.h`
    (y `VERSION` en el simulador) y una entrada en `CHANGELOG.md`.
 
 ## Ramas

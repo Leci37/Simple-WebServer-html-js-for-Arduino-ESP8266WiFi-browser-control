@@ -83,3 +83,11 @@ def test_the_version_is_the_same_everywhere():
     simulator = re.search(r'VERSION = "([\d.]+)"', (ROOT / "tools" / "simulador.py").read_text(encoding="utf-8"))
     changelog = re.search(r"^## ([\d.]+)", (ROOT / "CHANGELOG.md").read_text(encoding="utf-8"), re.M)
     assert firmware.group(1) == simulator.group(1) == changelog.group(1)
+
+
+def test_the_readme_only_shows_pictures_that_exist_and_uses_them_all():
+    readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    shown = set(re.findall(r"docs/img/([\w.-]+\.(?:png|jpg))", readme))
+    on_disk = {p.name for p in (ROOT / "docs" / "img").iterdir()}
+    assert shown <= on_disk, f"el README enseña capturas que no existen: {shown - on_disk}"
+    assert on_disk <= shown, f"capturas que nadie enseña: {on_disk - shown}"

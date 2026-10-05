@@ -117,3 +117,20 @@ def test_the_walk_button_brings_the_red_light_sooner(sim):
     time.sleep(1.1)
     state = sim.api("/api/state")
     assert state["leds"]["red"] is True and state["walk"] is True
+
+
+def test_the_game_input_is_small_and_the_same_in_firmware_and_simulator(sim):
+    body = API_H[API_H.index("void handleInput()") : API_H.index("// /api/mode")]
+    assert set(re.findall(r'\\"(\w+)\\":', body)) == set(sim.api("/api/input"))
+
+
+def test_claps_are_counted_once_per_loud_sound(sim):
+    assert sim.api("/api/input")["claps"] == 0
+    sim.api("/sim?clap=1")
+    assert sim.api("/api/input")["claps"] == 1
+    # Llegar al rojo cuenta como palmada; quedarse en rojo, no cuenta más.
+    sim.api("/sim?sound=95")
+    sim.api("/api/state")
+    sim.api("/api/state")
+    assert sim.api("/api/input")["claps"] == 2
+    assert sim.api("/api/state")["sound"]["claps"] == 2

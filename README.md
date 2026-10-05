@@ -1,10 +1,10 @@
 # 🧪 Laboratorio de inventos
 
 Tres inventos para niños y niñas con una placa **NodeMCU (ESP8266)**: un
-**semáforo**, un **sonómetro** y un **detector de fantasmas**. Se juega con
-ellos y se **programan con bloques, como en Scratch**, desde el móvil, la
-tableta o el ordenador. La web vive dentro de la placa: no hace falta internet
-ni instalar nada.
+**semáforo**, un **sonómetro** y un **detector de fantasmas**, y un juego,
+**¡Salta, Chispa!**, que se juega con la placa. Los inventos se **programan con
+bloques, como en Scratch**, desde el móvil, la tableta o el ordenador. La web
+vive dentro de la placa: no hace falta internet ni instalar nada.
 
 <p align="center">
   <img src="docs/img/portada.png" width="200" alt="La portada: elige un invento" />
@@ -25,6 +25,29 @@ Los tres viven a la vez en la misma placa y comparten las tres luces: se monta
 una vez y se pasa de uno a otro sin desmontar nada. Cada invento tiene tres
 pestañas: **Jugar**, **Programar** (con sus retos) y **Montar** (con el dibujo
 de los cables).
+
+## 🎮 ¡Salta, Chispa! (el juego)
+
+<p align="center"><img src="docs/img/juego.png" width="760" alt="El juego: Chispa corre de noche con el cohete y un cactus delante" /></p>
+
+Como el dinosaurio de Chrome cuando no hay internet, pero con Chispa, dibujos
+de colores, día y noche, y **mandos de verdad**:
+
+- 🔘 el **botón FLASH** de la placa (viene puesto, no hay que montar nada),
+- 👏 una **palmada** (con el micrófono del sonómetro),
+- 👋 la **mano** a menos de 15 cm del sensor de distancia,
+- y siempre tocando la pantalla o con la barra espaciadora.
+
+Por el camino salen cosas que no apetecen: **cactus, deberes, brócoli, el libro
+de mates**, un **coche con prisa** y el **Nubarrón**, que tira exámenes desde
+arriba. Ayudan tres poderes: **escudo** (aguanta un golpe), **cohete** (los
+saltos vuelan) y **cámara lenta**; y hay rayos para coger. Se tienen tres vidas.
+A los 800 m llega la **Súper Cosechadora**: sólo se salta con el cohete, y es el
+final de la demo. Mientras nadie juega, la pantalla de inicio juega sola. Las
+luces de la placa van con la partida: verde corriendo, amarillo con un poder,
+rojo al chocar.
+
+<p align="center"><img src="docs/img/juego-cosechadora.png" width="560" alt="El final: Chispa vuela con el cohete hacia la Súper Cosechadora" /></p>
 
 ## Programar con bloques
 
@@ -94,6 +117,7 @@ probar escribiéndolas en el navegador:
 | Orden | Qué hace |
 |---|---|
 | `/api/state` | Todo lo que sabe la placa: modo, luces, ruido, distancia, ajustes… |
+| `/api/input` | Lo justo para jugar: pulsaciones del botón, palmadas, distancia y ruido. |
 | `/api/mode?set=manual\|auto\|night\|sound\|ghost` | Quién manda en las luces. |
 | `/api/light?color=red\|yellow\|green\|all&on=1\|0` | Enciende o apaga (sin `on`, cambia). Pone el modo manual. |
 | `/api/beep?hz=880&ms=200` | Un pitido o una nota en el zumbador. |
@@ -141,7 +165,8 @@ tocado.
 
 **English summary.** A kids' lab for a NodeMCU (ESP8266) board: a traffic light,
 a sound meter and a "ghost detector" (an ultrasonic distance sensor), all on the
-same board and the same three LEDs. The board hosts its own Wi-Fi with a captive
+same board and the same three LEDs, plus a Chrome-dino-style runner game played
+with the board's FLASH button, a clap or a hand over the sensor. The board hosts its own Wi-Fi with a captive
 portal and serves a kid-friendly web app (Spanish) with live controls, wiring
 diagrams and a Scratch-like block editor that runs sequences on the board. No
 external Arduino libraries are needed. A JSON/CORS API makes it scriptable from

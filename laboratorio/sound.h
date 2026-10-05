@@ -15,12 +15,15 @@ const unsigned long SOUND_SAMPLE_MS = 5;
 const uint8_t SOUND_WINDOW = 30;
 // El pico se queda quieto 2 segundos, como en los ecualizadores.
 const unsigned long SOUND_PEAK_HOLD_MS = 2000;
+// Después de una palmada, 300 ms sordos: el eco de la misma no cuenta como otra.
+const unsigned long SOUND_CLAP_GAP_MS = 300;
 
 struct SoundState {
   uint8_t level = 0;   // 0-100: lo que enseñan la web y las luces
   uint8_t peak = 0;    // el nivel más alto de los últimos 2 segundos
   uint16_t raw = 0;    // lectura más alta menos la más baja (0-1023)
   bool mic = false;    // ¿parece que hay un micrófono conectado?
+  uint16_t claps = 0;  // palmadas (golpes que llegan al rojo) desde que arrancó
 };
 
 SoundState sound;
@@ -32,6 +35,8 @@ static uint16_t soundMax = 0;
 static uint32_t soundSum = 0;
 static uint8_t soundSamples = 0;
 static float soundSmooth = 0;
+static float soundBias = 0;
+static unsigned long soundClapAt = 0;
 
 // Un sonido el doble de fuerte no nos parece el doble: el oído va a saltos,
 // y por eso los decibelios usan logaritmos. Aquí hacemos lo mismo.
@@ -41,6 +46,20 @@ uint8_t soundLevelFrom(float peakToPeak) {
   if (peakToPeak <= QUIET) return 0;
   float level = 100.0f * log10f(peakToPeak / QUIET) / log10f(LOUD / QUIET);
   return (uint8_t)constrain(level, 0.0f, 100.0f);
+}
+
+// Las palmadas se miran en cada lectura, sin esperar a la ventana de 150 ms:
+// en el juego, saltar tarde es chocar. La señal descansa en su punto medio
+// (que seguimos despacio) y una palmada la aparta de golpe.
+void detectClap(uint16_t value, unsigned long now) {
+  if (soundBias == 0) soundBias = value;
+  soundBias += (value - soundBias) * 0.02f;
+  float apart = fabsf(value - soundBias);
+  uint8_t level = soundLevelFrom(2 * apart * settings.soundGain / 100.0f);
+  if (sound.mic && level >= settings.soundRed && now - soundClapAt >= SOUND_CLAP_GAP_MS) {
+    sound.claps++;
+    soundClapAt = now;
+  }
 }
 
 void soundBegin() {
@@ -53,6 +72,7 @@ void soundLoop() {
   soundLastSample = now;
 
   uint16_t value = analogRead(PIN_MIC);
+  detectClap(value, now);
   if (value < soundMin) soundMin = value;
   if (value > soundMax) soundMax = value;
   soundSum += value;

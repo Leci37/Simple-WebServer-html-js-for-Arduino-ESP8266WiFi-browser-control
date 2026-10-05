@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>¡Salta, Chispa! · Laboratorio de inventos</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/app.css" />
+    <script src="/app.js" defer></script>
+    <script src="/juego.js" defer></script>
+  </head>
+  <body class="theme-game">
+    <header class="topbar">
+      <div class="wrap">
+        <a class="back" href="/" aria-label="Volver a los inventos">←</a>
+        <h1>🎮 ¡Salta, Chispa!</h1>
+        <span class="conn" data-conn>Conectando…</span>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <section class="game-card">
+        <div class="game-frame" id="frame">
+          <canvas id="game" aria-label="El juego: Chispa corre y salta"></canvas>
+          <div class="game-overlay" id="overlay">
+            <div class="overlay-box" id="screen-start">
+              <h2>¡Salta, Chispa!</h2>
+              <p>Esquiva los deberes, el brócoli y el libro de mates… y llega hasta la <b>Súper Cosechadora</b>.</p>
+              <button class="btn btn-go" type="button" id="start-btn"><span class="ico">▶</span>¡A jugar!</button>
+              <p class="small">o pulsa tu mando: el botón de la placa, una palmada…</p>
+            </div>
+            <div class="overlay-box" id="screen-over" hidden>
+              <h2 id="over-title">¡Te ha pillado!</h2>
+              <p class="big-score" id="over-score"></p>
+              <p id="over-record"></p>
+              <button class="btn btn-go" type="button" id="over-again"><span class="ico">↻</span>¡Otra vez!</button>
+            </div>
+            <div class="overlay-box" id="screen-win" hidden>
+              <h2>🏆 ¡Has saltado la Súper Cosechadora!</h2>
+              <p class="big-score" id="win-score"></p>
+              <p>Fin de la demo. ¿Te atreves a hacerlo con más rayos?</p>
+              <button class="btn btn-go" type="button" id="win-again"><span class="ico">↻</span>¡Otra vez!</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="game-bar">
+          <button class="btn jump-btn" type="button" id="jump-btn"><span class="ico">⤴</span>¡Salta!</button>
+          <button class="btn btn-soft" type="button" id="sound-btn">🔊 Con sonido</button>
+          <button class="btn btn-soft" type="button" id="full-btn">⛶ Pantalla completa</button>
+        </div>
+        <p class="rotate-hint">📱 Gira el móvil para ver el juego más grande.</p>
+      </section>
+
+      <div class="play-grid">
+        <section class="card">
+          <h2>¿Con qué saltas?</h2>
+          <div class="mandos">
+            <button class="mando" type="button" data-mando="boton">
+              <span class="mando-ico">🔘</span><b>Botón FLASH</b><span>el de la placa</span>
+            </button>
+            <button class="mando" type="button" data-mando="palmada">
+              <span class="mando-ico">👏</span><b>Palmada</b><span>el micrófono te oye</span>
+            </button>
+            <button class="mando" type="button" data-mando="mano">
+              <span class="mando-ico">👋</span><b>Mano</b><span>a menos de 15 cm del sensor</span>
+            </button>
+          </div>
+          <p class="mando-live" id="mando-live" aria-live="polite">Buscando la placa…</p>
+          <p class="muted">Y siempre vale tocar el juego o pulsar la barra espaciadora. Si la palmada no te oye, baja el rojo en el <a href="/sonometro">sonómetro</a>.</p>
+        </section>
+
+        <section class="card">
+          <h2>Lo que te vas a encontrar</h2>
+          <ul class="cast">
+            <li><canvas data-sprite="cactus"></canvas><b>Cactus</b><span>pinchan</span></li>
+            <li><canvas data-sprite="deberes"></canvas><b>Deberes</b><span>¡hoy no!</span></li>
+            <li><canvas data-sprite="brocoli"></canvas><b>Brócoli</b><span>desde 120 m</span></li>
+            <li><canvas data-sprite="mates"></canvas><b>Libro de mates</b><span>muy alto</span></li>
+            <li><canvas data-sprite="coche"></canvas><b>Coche</b><span>¡va con prisa!</span></li>
+            <li><canvas data-sprite="nubarron"></canvas><b>Nubarrón</b><span>tira exámenes</span></li>
+            <li><canvas data-sprite="cosechadora"></canvas><b>Súper Cosechadora</b><span>al final, en 800 m</span></li>
+          </ul>
+          <h3>Lo que te ayuda</h3>
+          <ul class="cast">
+            <li><canvas data-sprite="escudo"></canvas><b>Escudo</b><span>aguanta un golpe</span></li>
+            <li><canvas data-sprite="cohete"></canvas><b>Cohete</b><span>saltas volando</span></li>
+            <li><canvas data-sprite="reloj"></canvas><b>Cámara lenta</b><span>todo va despacio</span></li>
+            <li><canvas data-sprite="bolt"></canvas><b>Rayos</b><span>¡cógelos todos!</span></li>
+          </ul>
+        </section>
+      </div>
+    </main>
+
+    <footer class="footer wrap">
+      Laboratorio de inventos · versión <span data-version>1.1.0</span> · placa <span data-board-name>…</span>
+    </footer>
+  </body>
+</html>

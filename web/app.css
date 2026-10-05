@@ -1446,6 +1446,11 @@ select.bk-in {
   box-shadow: 0 6px 0 #241a66;
 }
 
+.invento-game .btn {
+  background: #f97316;
+  box-shadow: 0 6px 0 #c2410c;
+}
+
 .how,
 .grown {
   margin-bottom: 22px;
@@ -1488,10 +1493,19 @@ code {
   overflow-wrap: anywhere;
 }
 
-@media (min-width: 760px) {
+@media (min-width: 640px) {
   .inventos {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
+}
+
+@media (min-width: 1000px) {
+  .inventos {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (min-width: 760px) {
 
   .how-steps {
     grid-template-columns: repeat(3, 1fr);
@@ -2130,4 +2144,246 @@ code {
   .conn::before {
     margin-right: 0;
   }
+}
+
+/* ---------- 🎮 ¡Salta, Chispa! (el juego) ---------- */
+
+.theme-game {
+  --bg: #fff3e6;
+  --dots: #ffd9b3;
+  --accent: #f97316;
+  --accent-dark: #c2410c;
+  --accent-soft: #ffedd5;
+}
+
+.game-card {
+  margin-top: 18px;
+}
+
+/* El juego mide 800 × 300: la caja guarda esa forma (300/800 = 37,5 %). */
+.game-frame {
+  position: relative;
+  padding-top: 37.5%;
+  overflow: hidden;
+  border-radius: 24px;
+  border: 3px solid var(--line);
+  background: #17123a;
+  box-shadow: 0 8px 0 var(--shadow);
+}
+
+.game-frame canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  touch-action: manipulation;
+  cursor: pointer;
+}
+
+.game-frame:fullscreen {
+  padding-top: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+}
+
+.game-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: rgba(23, 18, 58, 0.35);
+}
+
+.game-overlay[hidden] {
+  display: none;
+}
+
+.overlay-box {
+  max-width: 460px;
+  padding: 18px 22px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 3px solid var(--line);
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.18);
+  text-align: center;
+}
+
+.overlay-box[hidden] {
+  display: none;
+}
+
+.overlay-box h2 {
+  font-size: 1.5rem;
+}
+
+.overlay-box p {
+  margin: 0 0 10px;
+}
+
+.overlay-box .small {
+  margin: 10px 0 0;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.big-score {
+  font-size: 1.3rem;
+  font-weight: 900;
+}
+
+.game-bar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin: 18px -6px 0;
+}
+
+.game-bar .btn {
+  margin: 6px;
+}
+
+.jump-btn {
+  min-width: 180px;
+  min-height: 64px;
+  font-size: 1.3rem;
+  touch-action: manipulation;
+}
+
+.rotate-hint {
+  display: none;
+  margin: 12px 0 0;
+  text-align: center;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+@media (max-width: 600px) and (orientation: portrait) {
+  .rotate-hint {
+    display: block;
+  }
+
+  /* En vertical, el marco es más alto: arriba sigue el cielo y abajo el suelo. */
+  .game-frame {
+    padding-top: 78%;
+  }
+
+  .overlay-box {
+    padding: 10px 12px;
+  }
+
+  .overlay-box h2 {
+    font-size: 1.05rem;
+    margin-bottom: 4px;
+  }
+
+  .overlay-box p {
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+  }
+
+  .overlay-box .small {
+    display: none;
+  }
+
+  .overlay-box .btn {
+    min-height: 40px;
+    padding: 6px 14px;
+  }
+}
+
+.mandos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+}
+
+.mando {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 12px 6px;
+  border: 3px solid var(--line);
+  border-radius: 18px;
+  background: var(--card);
+  box-shadow: 0 5px 0 var(--shadow);
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+.mando b {
+  color: var(--ink);
+  font-size: 1rem;
+}
+
+.mando-ico {
+  font-size: 2rem;
+  line-height: 1.2;
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
+.mando.on {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.mando.on .mando-ico {
+  filter: none;
+  opacity: 1;
+}
+
+.mando-live {
+  margin: 14px 0 8px;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: var(--accent-soft);
+  font-weight: 800;
+  text-align: center;
+  transition: transform 0.15s, background 0.15s;
+}
+
+.mando-live.hit {
+  background: #ffd84d;
+  transform: scale(1.04);
+}
+
+.cast {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 14px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(96px, 1fr));
+  grid-gap: 10px;
+}
+
+.cast li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 4px 10px;
+  border-radius: 16px;
+  background: var(--accent-soft);
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.cast b {
+  color: var(--ink);
+  font-size: 0.9rem;
+  line-height: 1.15;
+}
+
+.cast canvas {
+  width: 72px;
+  height: 72px;
 }

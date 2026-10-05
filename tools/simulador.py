@@ -29,7 +29,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_web import TYPES, WEB, url_for, web_files  # noqa: E402
 
 MODES = ["manual", "auto", "night", "sound", "ghost"]
-VERSION = "1.0.0"
+VERSION = "1.1.0"
 
 
 def now_ms() -> int:
@@ -53,8 +53,10 @@ class Board:
         self.beeps: list[tuple[int, int]] = []
         # Lo que han ido mandando las órdenes de luces, para las pruebas.
         self.light_log: list[dict] = []
-        self.sound = {"level": 0, "peak": 0, "raw": 0, "mic": True}
+        self.sound = {"level": 0, "peak": 0, "raw": 0, "mic": True, "claps": 0}
         self.peak_at = 0
+        self.clap_at = -1000
+        self.was_loud = False
         self.ghost = {"cm": -1, "level": 0, "sensor": True}
         self.forced_sound: int | None = 0 if quiet else None
         self.forced_cm: int | None = -1 if quiet else None
@@ -154,6 +156,12 @@ class Board:
         self.sound["raw"] = int(4 * 10 ** (level / 100 * math.log10(700 / 4)))
         if level >= self.sound["peak"] or now - self.peak_at > 2000:
             self.sound["peak"], self.peak_at = level, now
+        # Como detectClap() de sound.h: llegar al rojo es una palmada (con 300 ms sordos).
+        loud = level >= self.settings["soundRed"]
+        if loud and not self.was_loud and now - self.clap_at >= 300:
+            self.sound["claps"] += 1
+            self.clap_at = now
+        self.was_loud = loud
         if self.forced_cm is not None:
             cm = self.forced_cm
         else:
@@ -187,6 +195,13 @@ class Board:
             self.tick()
             if path == "/api/state":
                 return 200, self.state()
+            if path == "/api/input":
+                return 200, {
+                    "button": self.button,
+                    "claps": self.sound["claps"],
+                    "cm": self.ghost["cm"],
+                    "level": self.sound["level"],
+                }
             if path == "/api/mode":
                 if args.get("set") not in MODES:
                     return 400, {"error": "set tiene que ser manual, auto, night, sound o ghost"}
@@ -241,10 +256,12 @@ class Board:
         return 200, self.state()
 
     def simulate(self, args: dict[str, str]) -> dict:
-        """/sim?sound=80&cm=15&auto=1: mover los sensores a mano."""
+        """/sim?sound=80&cm=15&clap=1&auto=1: mover los sensores a mano."""
         with self.lock:
             if "sound" in args:
                 self.forced_sound = arg_int(args, "sound", 0)
+            if args.get("clap") == "1":
+                self.sound["claps"] += 1
             if "cm" in args:
                 self.forced_cm = arg_int(args, "cm", -1)
             if args.get("auto") == "1":

@@ -1,5 +1,20 @@
 # CHANGELOG
 
+## 1.1.0 — 2026-10-05
+
+- **¡Salta, Chispa!**: un juego de correr y saltar como el del dinosaurio de
+  Chrome, con Chispa y gráficos dibujados con código (colinas, día y noche,
+  partículas). Se salta con el **botón FLASH** de la placa, con una
+  **palmada**, con la **mano** delante del sensor de distancia o tocando la
+  pantalla. Obstáculos que no gustan: cactus, deberes, brócoli, el libro de
+  mates, un coche con prisa y el Nubarrón, que tira exámenes desde arriba.
+  Poderes: escudo, cohete y cámara lenta; rayos para coger. A los 800 m llega
+  la **Súper Cosechadora**: se salta con el cohete y es el final de la demo.
+  La pantalla de inicio juega sola (modo demo). Las luces y el zumbador de la
+  placa acompañan la partida.
+- La placa cuenta **palmadas** (`sound.claps`) mirando cada lectura del
+  micrófono, y tiene una orden pequeña, `/api/input`, para jugar sin retraso.
+
 ## 1.0.0 — 2026-10-05
 
 El proyecto se rehace como **Laboratorio de inventos**, para niños y niñas. Lo

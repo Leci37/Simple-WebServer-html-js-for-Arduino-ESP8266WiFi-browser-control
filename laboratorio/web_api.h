@@ -65,14 +65,14 @@ String stateJson() {
            "{\"mode\":\"%s\","
            "\"leds\":{\"red\":%s,\"yellow\":%s,\"green\":%s},"
            "\"walk\":%s,\"button\":%u,"
-           "\"sound\":{\"level\":%u,\"peak\":%u,\"raw\":%u,\"mic\":%s},"
+           "\"sound\":{\"level\":%u,\"peak\":%u,\"raw\":%u,\"mic\":%s,\"claps\":%u},"
            "\"ghost\":{\"cm\":%d,\"level\":%u,\"sensor\":%s},"
            "\"settings\":{\"soundYellow\":%u,\"soundRed\":%u,\"soundGain\":%u,\"soundAlarm\":%s,"
            "\"ghostNear\":%u,\"ghostFar\":%u,\"ghostSound\":%s,\"trafficSpeed\":%u},",
            MODE_NAMES[lightMode],
            jsonBool(leds.red), jsonBool(leds.yellow), jsonBool(leds.green),
            jsonBool(walkLight()), buttonPresses,
-           sound.level, sound.peak, sound.raw, jsonBool(sound.mic),
+           sound.level, sound.peak, sound.raw, jsonBool(sound.mic), sound.claps,
            ghost.cm, ghost.level, jsonBool(ghost.sensor),
            settings.soundYellow, settings.soundRed, settings.soundGain, jsonBool(settings.soundAlarm),
            settings.ghostNear, settings.ghostFar, jsonBool(settings.ghostSound), settings.trafficSpeed);
@@ -87,6 +87,15 @@ String stateJson() {
 
 void handleState() {
   sendJson(200, stateJson());
+}
+
+// /api/input: sólo lo que hace falta para jugar (botón, palmadas, distancia y
+// ruido). Es pequeño a propósito: el juego lo pregunta 15 veces por segundo.
+void handleInput() {
+  char buf[96];
+  snprintf(buf, sizeof(buf), "{\"button\":%u,\"claps\":%u,\"cm\":%d,\"level\":%u}",
+           buttonPresses, sound.claps, ghost.cm, sound.level);
+  sendJson(200, buf);
 }
 
 // /api/mode?set=manual|auto|night|sound|ghost
@@ -168,6 +177,7 @@ void handleApiHelp() {
   sendJson(200,
            "{\"api\":["
            "\"GET /api/state\","
+           "\"GET /api/input\","
            "\"GET /api/mode?set=manual|auto|night|sound|ghost\","
            "\"GET /api/light?color=red|yellow|green|all&on=1|0\","
            "\"GET /api/beep?hz=880&ms=200\","
@@ -236,6 +246,7 @@ void webBegin() {
 
   server.on("/api", HTTP_GET, handleApiHelp);
   server.on("/api/state", HTTP_GET, handleState);
+  server.on("/api/input", HTTP_GET, handleInput);
   server.on("/api/mode", HTTP_GET, handleMode);
   server.on("/api/light", HTTP_GET, handleLight);
   server.on("/api/beep", HTTP_GET, handleBeep);

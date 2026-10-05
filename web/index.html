@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Laboratorio de inventos</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/app.css" />
+    <script src="/app.js" defer></script>
+    <script src="/inicio.js" defer></script>
+  </head>
+  <body class="home">
+    <header class="hero wrap">
+      <div class="chispa hero-chispa" data-mood="happy"></div>
+      <div class="hero-text">
+        <p class="hero-hello">¡Hola! Soy Chispa 👋</p>
+        <h1>Laboratorio de inventos</h1>
+        <p class="lead">Una placa, tres inventos y muchas ideas. ¿Por cuál empiezas?</p>
+        <span class="conn" data-conn>Conectando…</span>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <p class="offline-banner">
+        No encuentro la placa. ¿Está enchufada? ¿Sigues conectado a su wifi
+        (<b data-board-name>Laboratorio-…</b>)?
+      </p>
+
+      <section class="inventos" aria-label="Los inventos">
+        <a class="invento" href="/semaforo">
+          <svg class="invento-art" viewBox="0 0 240 150" aria-hidden="true">
+            <rect width="240" height="150" fill="#bdeefd" />
+            <circle cx="196" cy="34" r="18" fill="#ffd84d" />
+            <path d="M18 52c0-10 16-14 22-6 6-10 26-8 26 4 10 0 12 12 2 14H24c-8 0-10-10-6-12z" fill="#fff" />
+            <rect y="120" width="240" height="30" fill="#4a4e69" />
+            <path d="M8 135h26M54 135h26M100 135h26M146 135h26M192 135h26" stroke="#fff" stroke-width="5" />
+            <rect x="113" y="88" width="14" height="34" fill="#5b5f73" />
+            <rect x="92" y="10" width="56" height="84" rx="16" fill="#2b2d42" />
+            <circle cx="120" cy="30" r="10" fill="#6b2f36" />
+            <circle cx="120" cy="52" r="10" fill="#6b5a2b" />
+            <circle cx="120" cy="74" r="14" fill="#22d47b" opacity=".35" />
+            <circle cx="120" cy="74" r="10" fill="#22d47b" />
+          </svg>
+          <div class="invento-body">
+            <span class="nivel">⭐ Para empezar</span>
+            <h2>Semáforo</h2>
+            <p>Enciende las luces, ponlo en automático y programa tu propia secuencia.</p>
+            <p class="needs">Necesitas: 3 LEDs y 3 resistencias</p>
+            <span class="btn">¡Vamos!</span>
+          </div>
+        </a>
+
+        <a class="invento invento-sound" href="/sonometro">
+          <svg class="invento-art" viewBox="0 0 240 150" aria-hidden="true">
+            <rect width="240" height="150" fill="#e9ddff" />
+            <rect x="50" y="22" width="34" height="62" rx="17" fill="#6a3bd8" />
+            <path d="M40 62a27 27 0 0 0 54 0" stroke="#23214a" stroke-width="6" fill="none" stroke-linecap="round" />
+            <path d="M67 90v22M50 114h34" stroke="#23214a" stroke-width="6" stroke-linecap="round" />
+            <path d="M104 46q8 12 0 24M116 38q14 20 0 40" stroke="#8b5cf6" stroke-width="6" fill="none" stroke-linecap="round" />
+            <rect x="140" y="98" width="14" height="22" rx="4" fill="#22d47b" />
+            <rect x="160" y="84" width="14" height="36" rx="4" fill="#22d47b" />
+            <rect x="180" y="66" width="14" height="54" rx="4" fill="#ffc83d" />
+            <rect x="200" y="44" width="14" height="76" rx="4" fill="#ff4f4f" />
+          </svg>
+          <div class="invento-body">
+            <span class="nivel">⭐⭐ Un poco más</span>
+            <h2>Sonómetro</h2>
+            <p>¿Cuánto ruido hay? Las luces del semáforo te lo dicen. ¿Aguantáis en verde?</p>
+            <p class="needs">Necesitas: el semáforo y un micrófono</p>
+            <span class="btn">¡Vamos!</span>
+          </div>
+        </a>
+
+        <a class="invento invento-ghost" href="/fantasmas">
+          <svg class="invento-art" viewBox="0 0 240 150" aria-hidden="true">
+            <rect width="240" height="150" fill="#241c55" />
+            <circle cx="196" cy="32" r="16" fill="#fff6c9" />
+            <circle cx="186" cy="28" r="14" fill="#241c55" />
+            <path d="M30 30l2 5 5 2-5 2-2 5-2-5-5-2 5-2zM70 110l2 4 4 2-4 2-2 4-2-4-4-2 4-2zM210 100l2 4 4 2-4 2-2 4-2-4-4-2 4-2z" fill="#ffd84d" />
+            <path d="M120 22c-26 0-42 20-42 46v58l12-10 10 10 10-10 10 10 10-10 10 10 12-10V68c0-26-16-46-42-46z" fill="#f4f0ff" />
+            <ellipse cx="106" cy="66" rx="7" ry="10" fill="#23214a" />
+            <ellipse cx="134" cy="66" rx="7" ry="10" fill="#23214a" />
+            <ellipse cx="120" cy="90" rx="8" ry="10" fill="#23214a" />
+            <ellipse cx="96" cy="82" rx="6" ry="4" fill="#ff9bd2" opacity=".8" />
+            <ellipse cx="144" cy="82" rx="6" ry="4" fill="#ff9bd2" opacity=".8" />
+          </svg>
+          <div class="invento-body">
+            <span class="nivel">⭐⭐⭐ Para valientes</span>
+            <h2>Detector de fantasmas</h2>
+            <p>Un radar que avisa cuando algo se acerca… ¿o es alguien?</p>
+            <p class="needs">Necesitas: el semáforo y un sensor de distancia</p>
+            <span class="btn">¡Vamos!</span>
+          </div>
+        </a>
+      </section>
+
+      <section class="card how">
+        <h2>¿Cómo se juega?</h2>
+        <ol class="how-steps">
+          <li><span class="how-ico" aria-hidden="true">🔌</span><span><b>Monta</b> el circuito siguiendo el dibujo de cada invento.</span></li>
+          <li><span class="how-ico" aria-hidden="true">🎮</span><span><b>Juega</b> desde el móvil, la tableta o el ordenador.</span></li>
+          <li><span class="how-ico" aria-hidden="true">🧩</span><span><b>Programa</b> con bloques, como en Scratch, y mira cómo lo hace la placa.</span></li>
+        </ol>
+      </section>
+
+      <section class="card grown">
+        <h2>Para profes y familias</h2>
+        <p>
+          Cada invento practica una idea de programación: las <b>secuencias</b> (el semáforo),
+          los <b>bucles</b> y los <b>sensores</b> (el sonómetro) y las <b>condiciones</b> (el detector
+          de fantasmas). Los tres usan la misma placa y las mismas tres luces: no hay que desmontar
+          nada para pasar de uno a otro.
+        </p>
+        <p>
+          La placa crea su propia wifi, <b data-board-name>Laboratorio-…</b>, y esta web vive dentro
+          de ella, en <b>http://<span data-board-address>192.168.4.1</span></b>. No hace falta internet.
+        </p>
+        <p>
+          ¿Queréis programarla desde otro sitio (Snap!, TurboWarp, Python…)? Contesta en JSON a órdenes
+          sencillas, como <code>/api/light?color=red&amp;on=1</code>. La lista entera está en
+          <a href="/api">/api</a>.
+        </p>
+      </section>
+    </main>
+
+    <footer class="footer wrap">
+      Laboratorio de inventos · versión <span data-version>1.0.0</span> · placa
+      <span data-board-name>…</span>
+    </footer>
+  </body>
+</html>

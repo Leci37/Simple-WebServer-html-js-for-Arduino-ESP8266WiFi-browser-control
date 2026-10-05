@@ -1,0 +1,2133 @@
+/* Laboratorio de inventos: los estilos de todas las páginas.
+   Sin fuentes ni nada de internet: la placa no tiene, y la web vive en ella. */
+
+:root {
+  --font: ui-rounded, "SF Pro Rounded", "Nunito", "Varela Round", "Segoe UI Rounded",
+    "Arial Rounded MT Bold", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --bg: #fff6e6;
+  --dots: #ffe1b3;
+  --ink: #23214a;
+  --muted: #625f8a;
+  --card: #ffffff;
+  --line: #efe4cf;
+  --shadow: rgba(35, 33, 74, 0.1);
+  --accent: #1fa463;
+  --accent-dark: #127a46;
+  --accent-soft: #dcf7e8;
+  --red: #ff4f4f;
+  --yellow: #ffc83d;
+  --green: #22d47b;
+  --lamp-off: #3b3d55;
+  --cat-luces: #9966ff;
+  --cat-luces-dark: #774dcb;
+  --cat-sonido: #cf63cf;
+  --cat-sonido-dark: #a63fa6;
+  --cat-control: #ffab19;
+  --cat-control-dark: #cf8b17;
+  --cat-sensores: #4cb2dc;
+  --cat-sensores-dark: #2b8cb6;
+  --cat-eventos: #ffbf00;
+  --cat-eventos-dark: #cc9900;
+  --radius: 24px;
+}
+
+.theme-sound {
+  --bg: #f6f0ff;
+  --dots: #e6d9ff;
+  --line: #e7dcfb;
+  --accent: #8b5cf6;
+  --accent-dark: #6a3bd8;
+  --accent-soft: #efe7ff;
+}
+
+/* El detector de fantasmas es de noche. */
+.theme-ghost {
+  --bg: #17123a;
+  --dots: #2a2161;
+  --ink: #f4f0ff;
+  --muted: #b9b1e6;
+  --card: #241c55;
+  --line: #3a2f7a;
+  --shadow: rgba(0, 0, 0, 0.35);
+  --accent: #3ff0b0;
+  --accent-dark: #17b07c;
+  --accent-soft: #1d4b52;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font);
+  font-size: 17px;
+  line-height: 1.45;
+  color: var(--ink);
+  background-color: var(--bg);
+  background-image: radial-gradient(var(--dots) 1.6px, transparent 1.6px);
+  background-size: 24px 24px;
+}
+
+h1,
+h2,
+h3 {
+  line-height: 1.15;
+  margin: 0 0 0.4em;
+  font-weight: 900;
+  letter-spacing: -0.01em;
+}
+
+h1 {
+  font-size: 2rem;
+}
+
+h2 {
+  font-size: 1.45rem;
+}
+
+h3 {
+  font-size: 1.15rem;
+}
+
+p {
+  margin: 0 0 0.8em;
+}
+
+a {
+  color: var(--accent-dark);
+  font-weight: 800;
+}
+
+.theme-ghost a {
+  color: var(--accent);
+}
+
+button,
+input,
+select {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.wrap {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ---------- La barra de arriba ---------- */
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: var(--bg);
+  border-bottom: 3px solid var(--line);
+}
+
+.topbar .wrap {
+  display: flex;
+  align-items: center;
+  min-height: 64px;
+}
+
+.topbar .wrap > * + * {
+  margin-left: 12px;
+}
+
+.topbar h1 {
+  flex: 1;
+  margin: 0;
+  font-size: 1.35rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--card);
+  border: 3px solid var(--line);
+  box-shadow: 0 4px 0 var(--shadow);
+  text-decoration: none;
+  font-size: 1.4rem;
+  color: var(--ink);
+}
+
+.back:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 var(--shadow);
+}
+
+.link-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 3px solid var(--line);
+  font-size: 0.9rem;
+  font-weight: 800;
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+/* El piloto de la conexión con la placa. */
+.conn {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--card);
+  border: 3px solid var(--line);
+  font-size: 0.85rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.conn::before {
+  content: "";
+  width: 12px;
+  height: 12px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: #b9b6cf;
+}
+
+.conn.online::before {
+  background: var(--green);
+  box-shadow: 0 0 0 4px rgba(34, 212, 123, 0.25);
+}
+
+.conn.offline::before {
+  background: var(--red);
+  box-shadow: 0 0 0 4px rgba(255, 79, 79, 0.25);
+}
+
+.offline-banner {
+  display: none;
+  margin: 12px 0 0;
+  padding: 12px 16px;
+  border-radius: 18px;
+  background: #ffe1e1;
+  border: 3px solid #ffb3b3;
+  color: #7a1f1f;
+  font-weight: 700;
+}
+
+.is-offline .offline-banner {
+  display: block;
+}
+
+/* ---------- Tarjetas y botones ---------- */
+
+.card {
+  background: var(--card);
+  border: 3px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 8px 0 var(--shadow);
+  padding: 20px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  padding: 10px 20px;
+  border: 0;
+  border-radius: 18px;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 900;
+  font-size: 1.05rem;
+  text-decoration: none;
+  box-shadow: 0 6px 0 var(--accent-dark);
+  transition: transform 0.05s, box-shadow 0.05s;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.btn:active,
+.btn.pressed {
+  transform: translateY(4px);
+  box-shadow: 0 2px 0 var(--accent-dark);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn .ico {
+  font-size: 1.3em;
+  margin-right: 8px;
+}
+
+.btn-soft {
+  background: var(--card);
+  color: var(--ink);
+  border: 3px solid var(--line);
+  box-shadow: 0 6px 0 var(--shadow);
+}
+
+.btn-soft:active {
+  box-shadow: 0 2px 0 var(--shadow);
+}
+
+.btn-soft.selected {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--ink);
+}
+
+.btn-go {
+  background: #22c063;
+  box-shadow: 0 6px 0 #158a45;
+}
+
+.btn-go:active {
+  box-shadow: 0 2px 0 #158a45;
+}
+
+.btn-stop {
+  background: #ff5a5a;
+  box-shadow: 0 6px 0 #c43535;
+}
+
+.btn-stop:active {
+  box-shadow: 0 2px 0 #c43535;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin: -6px;
+}
+
+.row > * {
+  margin: 6px;
+}
+
+.grid {
+  display: grid;
+  grid-gap: 20px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+/* ---------- La mascota: Chispa ---------- */
+
+.chispa svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.chispa .rays {
+  transform-origin: 60px 64px;
+  animation: rays 3s ease-in-out infinite;
+}
+
+@keyframes rays {
+  50% {
+    transform: scale(1.08);
+    opacity: 0.7;
+  }
+}
+
+.helper {
+  display: flex;
+  align-items: flex-start;
+}
+
+.helper .chispa {
+  width: 70px;
+  flex: none;
+  margin-right: 14px;
+}
+
+.bubble {
+  position: relative;
+  flex: 1;
+  padding: 12px 16px;
+  border-radius: 20px;
+  background: var(--card);
+  border: 3px solid var(--line);
+  font-weight: 700;
+}
+
+.bubble::before {
+  content: "";
+  position: absolute;
+  left: -13px;
+  top: 22px;
+  border-style: solid;
+  border-width: 9px 13px 9px 0;
+  border-color: transparent var(--line) transparent transparent;
+}
+
+.bubble p:last-child {
+  margin: 0;
+}
+
+/* ---------- Pestañas ---------- */
+
+.tabs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+  margin: 18px 0;
+}
+
+.tab {
+  min-height: 56px;
+  padding: 8px;
+  border: 3px solid var(--line);
+  border-radius: 18px;
+  background: var(--card);
+  box-shadow: 0 5px 0 var(--shadow);
+  font-weight: 900;
+  font-size: 1.05rem;
+}
+
+.tab[aria-selected="true"] {
+  background: var(--accent);
+  border-color: var(--accent-dark);
+  color: #fff;
+  box-shadow: 0 5px 0 var(--accent-dark);
+}
+
+.theme-ghost .tab[aria-selected="true"] {
+  color: #10223a;
+}
+
+.tab .ico {
+  display: block;
+  font-size: 1.4rem;
+  line-height: 1.2;
+}
+
+.panel[hidden] {
+  display: none;
+}
+
+/* ---------- Las luces (el semáforo de verdad, en pequeño o en grande) ---------- */
+
+.traffic {
+  position: relative;
+  display: inline-grid;
+  grid-gap: 14px;
+  padding: 18px;
+  border-radius: 34px;
+  background: #2b2d42;
+  box-shadow: inset 0 -8px 0 rgba(0, 0, 0, 0.25), 0 8px 0 var(--shadow);
+}
+
+.lamp {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  border: 6px solid #1b1c2c;
+  background: var(--lamp-off);
+  box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.25);
+  transition: background 0.15s, box-shadow 0.15s;
+  -webkit-tap-highlight-color: transparent;
+}
+
+button.lamp:active {
+  transform: scale(0.96);
+}
+
+.lamp.red.on {
+  background: var(--red);
+  box-shadow: 0 0 26px 6px rgba(255, 79, 79, 0.65), inset 0 -6px 0 rgba(0, 0, 0, 0.15);
+}
+
+.lamp.yellow.on {
+  background: var(--yellow);
+  box-shadow: 0 0 26px 6px rgba(255, 200, 61, 0.7), inset 0 -6px 0 rgba(0, 0, 0, 0.12);
+}
+
+.lamp.green.on {
+  background: var(--green);
+  box-shadow: 0 0 26px 6px rgba(34, 212, 123, 0.65), inset 0 -6px 0 rgba(0, 0, 0, 0.12);
+}
+
+.traffic.small {
+  grid-gap: 8px;
+  padding: 10px;
+  border-radius: 22px;
+}
+
+.traffic.small .lamp {
+  width: 38px;
+  height: 38px;
+  border-width: 4px;
+}
+
+/* ---------- Deslizadores e interruptores ---------- */
+
+.field {
+  margin: 0 0 16px;
+}
+
+.field label,
+.field .label {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.field output {
+  font-size: 1.15rem;
+  font-weight: 900;
+  min-width: 3ch;
+  text-align: right;
+}
+
+input[type="range"] {
+  width: 100%;
+  height: 34px;
+  margin: 0;
+  background: transparent;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 14px;
+  border-radius: 999px;
+  background: var(--track, var(--line));
+}
+
+input[type="range"]::-moz-range-track {
+  height: 14px;
+  border-radius: 999px;
+  background: var(--track, var(--line));
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 30px;
+  height: 30px;
+  margin-top: -8px;
+  border-radius: 50%;
+  background: var(--thumb, var(--accent));
+  border: 4px solid #fff;
+  box-shadow: 0 3px 0 var(--shadow), 0 0 0 2px var(--line);
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--thumb, var(--accent));
+  border: 4px solid #fff;
+  box-shadow: 0 3px 0 var(--shadow);
+}
+
+.switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+}
+
+.switch .knob {
+  position: relative;
+  width: 60px;
+  height: 34px;
+  flex: none;
+  margin-left: 12px;
+  border-radius: 999px;
+  background: var(--line);
+  transition: background 0.15s;
+}
+
+.switch .knob::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 2px 0 var(--shadow);
+  transition: transform 0.15s;
+}
+
+.switch input:checked + .knob {
+  background: var(--accent);
+}
+
+.switch input:checked + .knob::after {
+  transform: translateX(26px);
+}
+
+.switch input:focus-visible + .knob {
+  outline: 3px solid var(--accent-dark);
+  outline-offset: 2px;
+}
+
+/* ---------- Montar: esquema, piezas y pasos ---------- */
+
+.wiring {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -8px;
+  padding: 0 8px 8px;
+}
+
+.wiring svg {
+  display: block;
+  width: 100%;
+  min-width: 600px;
+  max-width: 780px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.wiring text {
+  font-family: var(--font);
+  font-weight: 800;
+}
+
+.parts {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  grid-gap: 10px;
+}
+
+.parts li {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 16px;
+  background: var(--accent-soft);
+  font-weight: 700;
+}
+
+.parts .n {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  margin-right: 10px;
+  border-radius: 12px;
+  background: var(--card);
+  font-weight: 900;
+}
+
+.steps {
+  counter-reset: step;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.steps li {
+  position: relative;
+  padding: 4px 0 14px 54px;
+  min-height: 48px;
+}
+
+.steps li::before {
+  counter-increment: step;
+  content: counter(step);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.theme-ghost .steps li::before {
+  color: #10223a;
+}
+
+.pins {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 6px;
+}
+
+.pins th {
+  text-align: left;
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding: 0 10px;
+}
+
+.pins td {
+  padding: 10px;
+  background: var(--accent-soft);
+  font-weight: 700;
+}
+
+.pins td:first-child {
+  border-radius: 14px 0 0 14px;
+}
+
+.pins td:last-child {
+  border-radius: 0 14px 14px 0;
+}
+
+.pin {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 8px;
+  background: #23214a;
+  color: #ffd84d;
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-weight: 800;
+}
+
+.wiring-hint {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+@media (min-width: 640px) {
+  .wiring-hint {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .pins td {
+    padding: 8px;
+    font-size: 0.92rem;
+  }
+}
+
+.tip {
+  padding: 12px 16px;
+  border-radius: 18px;
+  background: #fff3c4;
+  border: 3px dashed #ffcf4a;
+  color: #4a3b00;
+  font-weight: 700;
+}
+
+.tip p:last-child {
+  margin: 0;
+}
+
+.theme-ghost .tip {
+  background: #2f2a12;
+  border-color: #8a7420;
+  color: #ffe9a3;
+}
+
+/* ---------- Retos ---------- */
+
+.challenges {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.challenges li + li {
+  margin-top: 10px;
+}
+
+.challenge {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-column-gap: 12px;
+  align-items: center;
+  width: 100%;
+  padding: 10px 14px 12px;
+  border-radius: 18px;
+  border: 3px solid var(--line);
+  background: var(--card);
+  text-align: left;
+  font-weight: 700;
+}
+
+.challenge .stars {
+  grid-row: 1;
+  grid-column: 1;
+  color: #f5a400;
+  letter-spacing: -0.05em;
+}
+
+.challenge > span:nth-child(2) {
+  grid-row: 2;
+  grid-column: 1;
+}
+
+.challenge .check {
+  grid-row: 1 / 3;
+  grid-column: 2;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 3px solid var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+.challenge.done {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.challenge.done .check {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.challenge-count {
+  font-weight: 900;
+}
+
+/* ---------- Confeti (para celebrar) ---------- */
+
+.confetti {
+  position: fixed;
+  top: -20px;
+  z-index: 100;
+  font-size: 26px;
+  pointer-events: none;
+  animation: fall 1.6s ease-in forwards;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(105vh) rotate(540deg);
+    opacity: 0.8;
+  }
+}
+
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 90;
+  max-width: calc(100% - 32px);
+  padding: 14px 20px;
+  border-radius: 20px;
+  background: #23214a;
+  color: #fff;
+  font-weight: 800;
+  box-shadow: 0 8px 0 rgba(0, 0, 0, 0.2);
+  transform: translate(-50%, 140%);
+  transition: transform 0.25s;
+}
+
+.toast.show {
+  transform: translate(-50%, 0);
+}
+
+/* ---------- Pie ---------- */
+
+.footer {
+  margin: 40px 0 24px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.footer a {
+  color: inherit;
+}
+
+@media (min-width: 720px) {
+  h1 {
+    font-size: 2.6rem;
+  }
+
+  .lamp {
+    width: 104px;
+    height: 104px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ---------- 🧩 El editor de bloques (como Scratch) ---------- */
+
+.bk-editor {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  grid-gap: 16px;
+  --notch: var(--card);
+}
+
+.cat-luces {
+  --c: var(--cat-luces);
+  --cd: var(--cat-luces-dark);
+}
+
+.cat-sonido {
+  --c: var(--cat-sonido);
+  --cd: var(--cat-sonido-dark);
+}
+
+.cat-control {
+  --c: var(--cat-control);
+  --cd: var(--cat-control-dark);
+}
+
+.cat-sensores {
+  --c: var(--cat-sensores);
+  --cd: var(--cat-sensores-dark);
+}
+
+.cat-eventos {
+  --c: var(--cat-eventos);
+  --cd: var(--cat-eventos-dark);
+}
+
+.bk-palette {
+  padding: 4px 16px 10px;
+  border-radius: 20px;
+  background: var(--card);
+  border: 3px solid var(--line);
+}
+
+.bk-cats {
+  display: flex;
+  flex-wrap: wrap;
+  margin: 8px -4px 2px;
+}
+
+.bk-cat-tab {
+  margin: 4px;
+  padding: 6px 12px;
+  border: 3px solid var(--line);
+  border-radius: 999px;
+  background: var(--card);
+  font-weight: 800;
+  font-size: 0.92rem;
+}
+
+.bk-cat-tab.active {
+  background: var(--c);
+  border-color: var(--cd);
+  color: #fff;
+}
+
+.bk-cat-title {
+  display: flex;
+  align-items: center;
+  margin: 12px 0 8px;
+  font-size: 1rem;
+}
+
+.bk-list {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+}
+
+.bk-list .bk {
+  margin: 0 8px 12px 0;
+}
+
+/* Un bloque: color de su familia, con la muesca de arriba y la pestaña de
+   abajo, para que se vea que encajan unos con otros. */
+.bk {
+  position: relative;
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  min-height: 48px;
+  padding: 6px 10px 8px 14px;
+  border: 2px solid var(--cd);
+  border-radius: 10px;
+  background: var(--c);
+  box-shadow: inset 0 -4px 0 rgba(0, 0, 0, 0.16);
+  color: #fff;
+  font-weight: 800;
+  font-size: 0.98rem;
+  line-height: 1.2;
+  text-align: left;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.18);
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  cursor: grab;
+}
+
+.bk::before {
+  content: "";
+  position: absolute;
+  top: -2px;
+  left: 16px;
+  width: 24px;
+  height: 7px;
+  border-radius: 0 0 7px 7px;
+  background: var(--notch);
+}
+
+.bk::after {
+  content: "";
+  position: absolute;
+  bottom: -9px;
+  left: 16px;
+  z-index: 1;
+  width: 24px;
+  height: 9px;
+  border: 2px solid var(--cd);
+  border-top: 0;
+  border-radius: 0 0 7px 7px;
+  background: var(--c);
+}
+
+.bk > * {
+  margin: 2px 3px;
+}
+
+.bk-text {
+  white-space: nowrap;
+}
+
+/* Los huecos para escribir: blancos y redondos, como en Scratch. */
+.bk-slot,
+.bk-in {
+  display: inline-block;
+  min-width: 36px;
+  padding: 4px 9px;
+  border: 0;
+  border-radius: 999px;
+  background: #fff;
+  color: #3d3a66;
+  font-weight: 800;
+  font-size: 0.95rem;
+  text-align: center;
+  text-shadow: none;
+  box-shadow: inset 0 0 0 2px var(--cd);
+}
+
+.bk-in {
+  cursor: text;
+  touch-action: manipulation;
+}
+
+select.bk-in {
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  padding-right: 22px;
+  background-image: linear-gradient(45deg, transparent 50%, #3d3a66 50%), linear-gradient(135deg, #3d3a66 50%, transparent 50%);
+  background-position: right 11px center, right 6px center;
+  background-size: 5px 5px;
+  background-repeat: no-repeat;
+}
+
+.bk-num {
+  width: auto;
+  min-width: 40px;
+}
+
+.bk-x {
+  width: 30px;
+  height: 30px;
+  margin-left: 6px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.28);
+  color: #fff;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.bk-lap {
+  margin-left: 6px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.22);
+  font-size: 0.85rem;
+}
+
+.bk-lap:empty {
+  display: none;
+}
+
+/* El sombrero de arriba: «al pulsar ▶». */
+.bk-hat {
+  border-radius: 28px 28px 10px 10px;
+  padding-top: 14px;
+  color: #3b2a00;
+  text-shadow: none;
+  cursor: default;
+}
+
+.bk-hat::before {
+  display: none;
+}
+
+/* Los bloques con hueco: «repetir», «por siempre», «si…». */
+.bk-c {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: stretch;
+  min-width: 220px;
+}
+
+.bk-c > .bk {
+  display: flex;
+}
+
+.bk-c-top {
+  border-radius: 10px 10px 0 0;
+  border-bottom-width: 0;
+  box-shadow: none;
+}
+
+.bk-c-top::after {
+  left: 34px;
+  bottom: -7px;
+}
+
+.bk-c-bottom {
+  min-height: 24px;
+  padding: 0;
+  border-top-width: 0;
+  border-radius: 0 0 10px 10px;
+}
+
+.bk-c-bottom::before {
+  display: none;
+}
+
+.bk-mouth {
+  display: flex;
+}
+
+.bk-mouth::before {
+  content: "";
+  flex: none;
+  width: 18px;
+  background: var(--c);
+  border-left: 2px solid var(--cd);
+}
+
+.bk-mouth > .bk-stack {
+  flex: 1;
+  min-height: 40px;
+  padding: 2px 0 2px 2px;
+  border-radius: 0 10px 10px 0;
+}
+
+.bk-stack {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.bk-stack.bk-target {
+  outline: 3px dashed var(--c);
+  outline-offset: -2px;
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.bk-workspace {
+  min-width: 0;
+}
+
+.bk-toolbar {
+  margin-bottom: 4px;
+}
+
+.bk-status {
+  min-height: 1.5em;
+  margin: 8px 0 10px;
+  font-weight: 800;
+}
+
+.bk-script {
+  --notch: #fbfaff;
+  position: relative;
+  min-height: 320px;
+  padding: 18px 18px 40px;
+  overflow-x: auto;
+  border: 3px solid var(--line);
+  border-radius: 20px;
+  background-color: #fbfaff;
+  background-image: radial-gradient(#dedaf2 1.4px, transparent 1.4px);
+  background-size: 22px 22px;
+}
+
+.theme-ghost .bk-script {
+  --notch: #1d1647;
+  background-color: #1d1647;
+  background-image: radial-gradient(#352a7a 1.4px, transparent 1.4px);
+}
+
+.theme-ghost .bk-palette {
+  --notch: var(--card);
+}
+
+.bk-root {
+  min-height: 60px;
+}
+
+.bk-empty {
+  margin: 14px 0 0;
+  max-width: 340px;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+/* Lo que no se ejecutará nunca (debajo de un «por siempre»). */
+.bk-dead {
+  opacity: 0.45;
+  filter: grayscale(0.6);
+}
+
+/* El bloque que se está ejecutando brilla, como en Scratch. */
+.bk.bk-run {
+  box-shadow: 0 0 0 4px #ffe066, 0 0 20px 6px rgba(255, 214, 51, 0.85);
+  z-index: 2;
+}
+
+.bk-marker {
+  align-self: stretch;
+  height: 8px;
+  margin: -4px 0;
+  border-radius: 999px;
+  background: #4c97ff;
+  box-shadow: 0 0 0 2px #fff;
+  position: relative;
+  z-index: 3;
+}
+
+.bk-ghost {
+  position: fixed;
+  z-index: 200;
+  pointer-events: none;
+  opacity: 0.9;
+  transform: rotate(-2deg);
+  filter: drop-shadow(0 10px 12px rgba(0, 0, 0, 0.25));
+  --notch: transparent;
+}
+
+.bk-dragging,
+.bk-dragging * {
+  cursor: grabbing !important;
+}
+
+.bk-trash {
+  display: none;
+  position: fixed;
+  left: 50%;
+  bottom: 18px;
+  z-index: 150;
+  padding: 12px 20px;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid #ffb3b3;
+  color: #7a1f1f;
+  font-weight: 900;
+  transform: translateX(-50%);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.15);
+}
+
+.bk-dragging-script .bk-trash {
+  display: block;
+}
+
+.bk-trash.hot {
+  background: #ff5a5a;
+  border-color: #c43535;
+  color: #fff;
+}
+
+@media (min-width: 900px) {
+  .bk-editor {
+    grid-template-columns: 360px minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .bk-palette .bk-text {
+    white-space: normal;
+  }
+
+  .bk-palette {
+    position: sticky;
+    top: 84px;
+  }
+}
+
+/* ---------- Portada ---------- */
+
+.hero {
+  display: flex;
+  align-items: center;
+  padding-top: 28px;
+  padding-bottom: 8px;
+}
+
+.hero-chispa {
+  width: 110px;
+  flex: none;
+  margin-right: 18px;
+  animation: bob 3s ease-in-out infinite;
+}
+
+@keyframes bob {
+  50% {
+    transform: translateY(-6px) rotate(-3deg);
+  }
+}
+
+.hero-hello {
+  margin: 0;
+  font-weight: 900;
+  color: var(--accent-dark);
+}
+
+.hero h1 {
+  margin: 2px 0 6px;
+}
+
+.lead {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.inventos {
+  display: grid;
+  grid-gap: 22px;
+  margin: 22px 0 30px;
+}
+
+.invento {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 28px;
+  border: 3px solid var(--line);
+  background: var(--card);
+  box-shadow: 0 10px 0 var(--shadow);
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: none;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+
+.invento:hover,
+.invento:focus-visible {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 0 var(--shadow);
+}
+
+.invento:active {
+  transform: translateY(4px);
+  box-shadow: 0 4px 0 var(--shadow);
+}
+
+.invento-art {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.invento-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex: 1;
+  padding: 18px 20px 22px;
+}
+
+.invento-body h2 {
+  font-size: 1.6rem;
+  margin: 8px 0 6px;
+}
+
+.invento-body .btn {
+  margin-top: auto;
+}
+
+.nivel {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: #fff1c4;
+  color: #6b4b00;
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.needs {
+  font-size: 0.92rem;
+  color: var(--muted);
+  font-weight: 700;
+}
+
+.invento-sound .btn {
+  background: #8b5cf6;
+  box-shadow: 0 6px 0 #6a3bd8;
+}
+
+.invento-ghost .btn {
+  background: #3b2a8f;
+  box-shadow: 0 6px 0 #241a66;
+}
+
+.how,
+.grown {
+  margin-bottom: 22px;
+}
+
+.how-steps {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  grid-gap: 14px;
+}
+
+.how-steps li {
+  display: flex;
+  align-items: center;
+  font-weight: 700;
+}
+
+.how-ico {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: 54px;
+  height: 54px;
+  margin-right: 14px;
+  border-radius: 18px;
+  background: var(--accent-soft);
+  font-size: 1.7rem;
+}
+
+
+code {
+  padding: 1px 6px;
+  border-radius: 6px;
+  background: rgba(35, 33, 74, 0.08);
+  font-family: ui-monospace, Menlo, Consolas, monospace;
+  font-size: 0.9em;
+  overflow-wrap: anywhere;
+}
+
+@media (min-width: 760px) {
+  .inventos {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .how-steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .hero-chispa {
+    width: 140px;
+  }
+}
+
+/* ---------- 🎮 Jugar: lo común ---------- */
+
+.play-grid {
+  display: grid;
+  grid-gap: 20px;
+  margin-top: 18px;
+}
+
+.choice {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+  margin-bottom: 18px;
+}
+
+.choice .btn {
+  flex-direction: column;
+  min-height: 74px;
+  padding: 8px 6px;
+  font-size: 0.98rem;
+}
+
+.choice .btn .ico {
+  margin: 0 0 2px;
+  font-size: 1.6rem;
+}
+
+.controls h3 {
+  margin-top: 4px;
+}
+
+.retos {
+  margin-top: 22px;
+}
+
+/* ---------- 🚦 Semáforo ---------- */
+
+.stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.crossing {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.pole {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 8px 10px;
+}
+
+.pole::after {
+  content: "";
+  width: 22px;
+  height: 70px;
+  background: linear-gradient(90deg, #5b5f73, #7d8296 45%, #5b5f73);
+  border-radius: 0 0 6px 6px;
+}
+
+.walker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 8px 10px;
+}
+
+.walker::after {
+  content: "";
+  width: 16px;
+  height: 70px;
+  background: linear-gradient(90deg, #5b5f73, #7d8296 45%, #5b5f73);
+  border-radius: 0 0 6px 6px;
+}
+
+.walk-light {
+  display: grid;
+  grid-gap: 10px;
+  padding: 12px;
+  border-radius: 20px;
+  background: #2b2d42;
+  box-shadow: inset 0 -6px 0 rgba(0, 0, 0, 0.25);
+}
+
+.walk-lamp {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 78px;
+  height: 78px;
+  border-radius: 14px;
+  background: #1b1c2c;
+}
+
+.walk-lamp svg {
+  width: 40px;
+  height: 60px;
+  fill: #3b3d55;
+  transition: fill 0.15s;
+}
+
+.walk-light.stop .walk-stop svg {
+  fill: var(--red);
+  filter: drop-shadow(0 0 8px rgba(255, 79, 79, 0.8));
+}
+
+.walk-light.go .walk-go svg {
+  fill: var(--green);
+  filter: drop-shadow(0 0 8px rgba(34, 212, 123, 0.8));
+}
+
+.walk-light.go .walk-go {
+  animation: blink-go 1s steps(2, start) infinite;
+}
+
+@keyframes blink-go {
+  50% {
+    opacity: 0.55;
+  }
+}
+
+.push {
+  margin-top: 8px;
+  border-radius: 999px;
+  background: #ff9f1c;
+  box-shadow: 0 6px 0 #c77300;
+}
+
+.push:active {
+  box-shadow: 0 2px 0 #c77300;
+}
+
+@media (min-width: 860px) {
+  .play-grid {
+    grid-template-columns: 1.2fr 1fr;
+    align-items: start;
+  }
+}
+
+/* En el móvil: una familia de bloques cada vez, en una fila que se desliza
+   de lado, y la paleta pegada arriba mientras se baja por el programa. */
+@media (max-width: 899px) {
+  .bk-palette {
+    position: sticky;
+    top: 67px;
+    z-index: 10;
+    padding: 2px 12px 0;
+    box-shadow: 0 6px 0 var(--shadow);
+  }
+
+  .bk-cat {
+    display: none;
+  }
+
+  .bk-cat.active {
+    display: block;
+  }
+
+  .bk-cat-title {
+    display: none;
+  }
+
+  .bk-cat-tab {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+  }
+
+  .bk-list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 0 -12px;
+    padding: 8px 12px 4px;
+  }
+
+  .bk-list .bk {
+    flex: none;
+    touch-action: pan-x;
+  }
+}
+
+@media (min-width: 900px) {
+  .bk-cats {
+    display: none;
+  }
+}
+
+/* ---------- 🎤 Sonómetro ---------- */
+
+.meter-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.meter {
+  flex: 1 1 260px;
+  max-width: 420px;
+  text-align: center;
+}
+
+.gauge {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.gauge .zone {
+  fill: none;
+  stroke-width: 26;
+}
+
+.gauge text {
+  font-family: var(--font);
+  font-weight: 800;
+  font-size: 13px;
+  fill: var(--muted);
+}
+
+.needle {
+  transform-origin: 150px 150px;
+  transition: transform 0.25s ease-out;
+}
+
+.needle line {
+  stroke: var(--ink);
+  stroke-width: 8;
+  stroke-linecap: round;
+}
+
+.needle circle {
+  fill: var(--ink);
+}
+
+.peak {
+  transform-origin: 150px 150px;
+  transition: transform 0.4s;
+}
+
+.peak line {
+  stroke: var(--accent-dark);
+  stroke-width: 6;
+  stroke-linecap: round;
+}
+
+.meter-readout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 4px;
+}
+
+.meter-face {
+  font-size: 2.6rem;
+  margin-right: 10px;
+}
+
+.meter-number {
+  font-size: 3rem;
+  font-weight: 900;
+  min-width: 2.2ch;
+  margin-right: 10px;
+}
+
+.meter-label {
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.meter-side {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 10px 0 0 16px;
+}
+
+.small-note {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.history {
+  display: block;
+  width: 100%;
+  height: 170px;
+  border-radius: 14px;
+  background: var(--accent-soft);
+}
+
+.game {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+}
+
+.game + .game {
+  border-top: 3px dashed var(--line);
+}
+
+.game > div {
+  flex: 1;
+  margin-right: 14px;
+}
+
+.game h3 {
+  margin: 0 0 4px;
+}
+
+.game p {
+  margin: 0;
+}
+
+.progress {
+  height: 12px;
+  margin-top: 8px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  overflow: hidden;
+}
+
+.progress span {
+  display: block;
+  width: 0;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--green);
+  transition: width 0.25s linear;
+}
+
+.no-mic {
+  margin-top: 14px;
+}
+
+/* ---------- 👻 Detector de fantasmas ---------- */
+
+.radar-card {
+  text-align: center;
+}
+
+@media (min-width: 860px) {
+  .radar-card {
+    grid-row: span 2;
+  }
+}
+
+.radar {
+  display: block;
+  width: 100%;
+  max-width: 460px;
+  height: auto;
+  margin: 0 auto;
+  overflow: visible;
+}
+
+.radar .fan {
+  fill: #0f2a2f;
+  stroke: #3ff0b0;
+  stroke-width: 2;
+  stroke-opacity: 0.6;
+}
+
+.radar text {
+  font-family: var(--font);
+  font-weight: 800;
+  font-size: 12px;
+}
+
+.radar .sensor {
+  fill: #1565c0;
+  stroke: #0d3c78;
+  stroke-width: 2;
+}
+
+.sweep {
+  transform-origin: 160px 196px;
+  animation: sweep 2.4s ease-in-out infinite alternate;
+}
+
+@keyframes sweep {
+  from {
+    transform: rotate(-42deg);
+  }
+  to {
+    transform: rotate(42deg);
+  }
+}
+
+.blip {
+  transition: transform 0.25s ease-out, opacity 0.2s;
+}
+
+.blip-glow {
+  fill: #3ff0b0;
+  opacity: 0.25;
+  animation: pulse 1s ease-in-out infinite;
+}
+
+.blip-ghost {
+  fill: #f4f0ff;
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.readout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 8px 0 14px;
+}
+
+.distance {
+  font-size: 3rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--accent);
+  text-shadow: 0 0 18px rgba(63, 240, 176, 0.45);
+}
+
+.status {
+  margin-top: 6px;
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.emf-title {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 800;
+  color: var(--muted);
+}
+
+.emf-bars {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  grid-gap: 8px;
+  max-width: 360px;
+  margin: 0 auto;
+}
+
+.emf-bars span {
+  height: 26px;
+  border-radius: 8px;
+  background: #2f2766;
+  transition: background 0.15s, box-shadow 0.15s;
+}
+
+.emf-bars span:nth-child(1).on {
+  background: #22d47b;
+  box-shadow: 0 0 14px #22d47b;
+}
+
+.emf-bars span:nth-child(2).on {
+  background: #9be22d;
+  box-shadow: 0 0 14px #9be22d;
+}
+
+.emf-bars span:nth-child(3).on {
+  background: #ffc83d;
+  box-shadow: 0 0 14px #ffc83d;
+}
+
+.emf-bars span:nth-child(4).on {
+  background: #ff9124;
+  box-shadow: 0 0 14px #ff9124;
+}
+
+.emf-bars span:nth-child(5).on {
+  background: #ff4f4f;
+  box-shadow: 0 0 16px #ff4f4f;
+}
+
+.ghost-card {
+  text-align: center;
+}
+
+.ghost-stage {
+  position: relative;
+  height: 210px;
+  border-radius: 20px;
+  background: radial-gradient(circle at 50% 70%, #3a2f8f 0%, #1d1647 70%);
+  overflow: hidden;
+}
+
+.big-ghost {
+  position: absolute;
+  left: 50%;
+  top: 20px;
+  width: 150px;
+  margin-left: -75px;
+  height: auto;
+  opacity: 0.06;
+  transition: opacity 0.3s, transform 0.3s;
+  animation: float 2.6s ease-in-out infinite;
+  filter: drop-shadow(0 0 18px rgba(244, 240, 255, 0.55));
+}
+
+@keyframes float {
+  50% {
+    margin-top: -10px;
+  }
+}
+
+.boo {
+  position: absolute;
+  right: 12%;
+  top: 18px;
+  padding: 6px 12px;
+  border-radius: 14px;
+  background: #fff;
+  color: #23214a;
+  font-weight: 900;
+  font-size: 1.3rem;
+  opacity: 0;
+  transform: scale(0.6) rotate(-8deg);
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.boo-on .boo {
+  opacity: 1;
+  transform: scale(1) rotate(-8deg);
+}
+
+.boo-on .big-ghost {
+  animation: float 2.6s ease-in-out infinite, shake 0.3s linear infinite;
+}
+
+@keyframes shake {
+  25% {
+    left: 48%;
+  }
+  75% {
+    left: 52%;
+  }
+}
+
+.hunt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin: 16px 0 6px;
+}
+
+.hunt-count {
+  margin: 6px 0;
+  font-size: 1.2rem;
+  font-weight: 900;
+}
+
+.hunt-lights {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+  text-align: left;
+}
+
+.hunt-lights .small-note {
+  margin: 0 0 0 14px;
+}
+
+.theme-ghost .traffic {
+  background: #0e0b26;
+}
+
+.flash {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 300;
+  background: #fff;
+  pointer-events: none;
+  animation: flash 0.7s ease-out forwards;
+}
+
+@keyframes flash {
+  from {
+    opacity: 0.9;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+.no-sensor {
+  margin-top: 14px;
+}
+
+/* ---------- Detalles para pantallas pequeñas ---------- */
+
+.field output {
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .topbar h1 {
+    font-size: 1.15rem;
+  }
+
+  .hide-sm {
+    display: none;
+  }
+
+  /* En el móvil, el piloto de conexión es sólo el puntito. */
+  .conn {
+    padding: 6px;
+    font-size: 0;
+  }
+
+  .conn::before {
+    margin-right: 0;
+  }
+}

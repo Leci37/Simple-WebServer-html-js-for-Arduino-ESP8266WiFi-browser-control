@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#17123a" />
+    <title>Detector de fantasmas · Laboratorio de inventos</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/app.css" />
+    <script src="/app.js" defer></script>
+    <script src="/bloques.js" defer></script>
+    <script src="/esquema.js" defer></script>
+    <script src="/fantasmas.js" defer></script>
+  </head>
+  <body class="theme-ghost">
+    <header class="topbar">
+      <div class="wrap">
+        <a class="back" href="/" aria-label="Volver a los inventos">←</a>
+        <h1>👻 Detector<span class="hide-sm"> de fantasmas</span></h1>
+        <span class="conn" data-conn>Conectando…</span>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <p class="offline-banner">
+        No encuentro la placa. ¿Está enchufada? ¿Sigues conectado a su wifi
+        (<b data-board-name>Laboratorio-…</b>)?
+      </p>
+
+      <nav class="tabs" role="tablist" aria-label="¿Qué quieres hacer?">
+        <button class="tab" role="tab" data-tab="jugar" aria-controls="panel-jugar"><span class="ico">🎮</span>Jugar</button>
+        <button class="tab" role="tab" data-tab="programar" aria-controls="panel-programar"><span class="ico">🧩</span>Programar</button>
+        <button class="tab" role="tab" data-tab="montar" aria-controls="panel-montar"><span class="ico">🔌</span>Montar</button>
+      </nav>
+
+      <!-- 🎮 Jugar -->
+      <section id="panel-jugar" class="panel" role="tabpanel" aria-label="Jugar">
+        <div class="helper">
+          <div class="chispa" data-mood="happy"></div>
+          <div class="bubble"><p data-say>Apunta el sensor a la puerta y espera… ¿vendrá algún fantasma?</p></div>
+        </div>
+        <p class="tip no-sensor" id="no-sensor" hidden>
+          El radar no recibe ningún eco. ¿Está bien conectado el sensor (TRIG a <b>D1</b>, ECHO a <b>D2</b>)? Mira
+          la pestaña «Montar».
+        </p>
+
+        <div class="play-grid">
+          <div class="card radar-card">
+            <svg class="radar" id="radar" viewBox="0 0 320 210" aria-hidden="true">
+              <defs>
+                <linearGradient id="sweep-grad" x1="0" y1="1" x2="0" y2="0">
+                  <stop offset="0" stop-color="#3ff0b0" stop-opacity=".55" />
+                  <stop offset="1" stop-color="#3ff0b0" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+              <path class="fan" d="M160 196 L40.8 76.8 A168.6 168.6 0 0 1 279.2 76.8 Z" />
+              <g id="rings"></g>
+              <g class="sweep"><path d="M160 196 L148 30 A166 166 0 0 1 172 30 Z" fill="url(#sweep-grad)" /></g>
+              <g id="blip" class="blip">
+                <circle r="16" class="blip-glow" />
+                <path d="M0 -12c-7 0-11 5-11 12v13l3-3 3 3 2.5-3 2.5 3 2.5-3 2.5 3 3-3 3 3V0c0-7-4-12-11-12z" class="blip-ghost" />
+                <circle cx="-4" cy="0" r="1.8" fill="#17123a" />
+                <circle cx="4" cy="0" r="1.8" fill="#17123a" />
+              </g>
+              <rect x="146" y="196" width="28" height="12" rx="3" class="sensor" />
+            </svg>
+            <div class="readout" aria-live="polite">
+              <span class="distance" id="distance">—</span>
+              <span class="status" id="status">Todo tranquilo… 😴</span>
+            </div>
+            <div class="emf" aria-label="Energía espectral">
+              <span class="emf-title">Energía espectral</span>
+              <div class="emf-bars" id="emf">
+                <span></span><span></span><span></span><span></span><span></span>
+              </div>
+            </div>
+          </div>
+
+          <div class="card ghost-card">
+            <div class="ghost-stage" id="stage">
+              <svg class="big-ghost" id="big-ghost" viewBox="0 0 140 160" aria-hidden="true">
+                <path d="M70 8C38 8 18 32 18 64v80l14-12 13 12 12-12 13 12 13-12 12 12 13-12 14 12V64C122 32 102 8 70 8z" fill="#f4f0ff" />
+                <ellipse cx="52" cy="62" rx="9" ry="13" fill="#23214a" />
+                <ellipse cx="88" cy="62" rx="9" ry="13" fill="#23214a" />
+                <circle cx="55" cy="57" r="3" fill="#fff" />
+                <circle cx="91" cy="57" r="3" fill="#fff" />
+                <ellipse cx="70" cy="96" rx="10" ry="13" fill="#23214a" />
+                <ellipse cx="38" cy="82" rx="8" ry="5" fill="#ff9bd2" opacity=".8" />
+                <ellipse cx="102" cy="82" rx="8" ry="5" fill="#ff9bd2" opacity=".8" />
+              </svg>
+              <span class="boo" id="boo">¡BUUU!</span>
+            </div>
+            <div class="hunt">
+              <p class="hunt-count">📸 Fantasmas cazados: <b id="caught">0</b></p>
+              <button class="btn btn-soft" type="button" id="reset-caught">Empezar de cero</button>
+            </div>
+            <div class="hunt-lights">
+              <div class="traffic small" id="traffic" aria-label="Las luces de la placa">
+                <span class="lamp red"></span>
+                <span class="lamp yellow"></span>
+                <span class="lamp green"></span>
+              </div>
+              <p class="muted small-note">Las luces de la placa: verde, nada; amarillo, algo se acerca; rojo, ¡fantasma!</p>
+            </div>
+          </div>
+
+          <div class="card">
+            <h2>Ajustes</h2>
+            <div class="field">
+              <label for="ghost-near">🔴 Rojo si está a menos de <output id="ghost-near-out"></output></label>
+              <input type="range" id="ghost-near" min="5" max="100" step="1" style="--thumb: #ff4f4f" />
+            </div>
+            <div class="field">
+              <label for="ghost-far">🟡 Amarillo si está a menos de <output id="ghost-far-out"></output></label>
+              <input type="range" id="ghost-far" min="15" max="300" step="5" style="--thumb: #ffc83d" />
+            </div>
+            <label class="switch">
+              <span>🔊 Pitidos de radar en la placa</span>
+              <input type="checkbox" id="ghost-sound" />
+              <span class="knob"></span>
+            </label>
+          </div>
+        </div>
+      </section>
+
+      <!-- 🧩 Programar -->
+      <section id="panel-programar" class="panel" role="tabpanel" aria-label="Programar" hidden>
+        <div class="helper">
+          <div class="chispa" data-mood="happy"></div>
+          <div class="bubble">
+            <p>
+              Con los bloques azules la placa <b>mira</b>: «si algo está a menos de… cm» decide qué hacer.
+              ¿Inventas una trampa para fantasmas?
+            </p>
+          </div>
+        </div>
+
+        <div id="editor"></div>
+
+        <div class="card retos">
+          <h2>🏆 Retos <span class="challenge-count" data-challenge-count="fantasmas"></span></h2>
+          <ul class="challenges" data-key="fantasmas">
+            <li><button class="challenge" type="button" data-id="1"><span class="stars">⭐</span><span>Acerca la mano muy despacio y mira cómo sube la energía espectral.</span><span class="check"></span></button></li>
+            <li><button class="challenge" type="button" data-id="2"><span class="stars">⭐</span><span>Caza 3 fantasmas: lleva el detector hasta el 5.</span><span class="check"></span></button></li>
+            <li><button class="challenge" type="button" data-id="3"><span class="stars">⭐⭐</span><span>Mide cosas: ¿a cuántos centímetros está la pared? ¿Y el techo?</span><span class="check"></span></button></li>
+            <li><button class="challenge" type="button" data-id="4"><span class="stars">⭐⭐</span><span>Programa una trampa: cuando algo esté a menos de 30 cm, enciende el rojo y toca una nota.</span><span class="check"></span></button></li>
+            <li><button class="challenge" type="button" data-id="5"><span class="stars">⭐⭐⭐</span><span>Detector musical: con bloques «si», que toque una nota distinta según lo cerca que esté.</span><span class="check"></span></button></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 🔌 Montar -->
+      <section id="panel-montar" class="panel" role="tabpanel" aria-label="Montar" hidden>
+        <div class="card">
+          <h2>Lo que necesitas</h2>
+          <ul class="parts">
+            <li><span class="n">1</span>El semáforo ya montado (las tres luces)</li>
+            <li><span class="n">1</span>Sensor de distancia por ultrasonidos HC-SR04</li>
+            <li><span class="n">2</span>Resistencias: una de 1 kΩ y otra de 2 kΩ (o tres de 1 kΩ)</li>
+            <li><span class="n">1</span>Zumbador pasivo (para los pitidos de radar)</li>
+            <li><span class="n">6</span>Cables</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>Cómo se conecta</h2>
+          <div class="wiring" id="wiring"></div>
+          <table class="pins">
+            <thead>
+              <tr><th>Pieza</th><th>Qué pata</th><th>Pin</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>👻 Sensor</td><td>VCC: la corriente (5 V)</td><td><span class="pin">VIN</span></td></tr>
+              <tr><td>👻 Sensor</td><td>GND</td><td><span class="pin">GND</span></td></tr>
+              <tr><td>👻 Sensor</td><td>TRIG: el grito</td><td><span class="pin">D1</span></td></tr>
+              <tr><td>👻 Sensor</td><td>ECHO: el eco, por la resistencia de 1 kΩ</td><td><span class="pin">D2</span></td></tr>
+              <tr><td>Resistencia de 2 kΩ</td><td>entre D2 y GND</td><td><span class="pin">D2</span> <span class="pin">GND</span></td></tr>
+              <tr><td>🔊 Zumbador</td><td>+ y −</td><td><span class="pin">D8</span> <span class="pin">GND</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h2>Paso a paso</h2>
+          <ol class="steps">
+            <li>Monta primero el <a href="/semaforo#montar">semáforo</a>: el detector usa sus tres luces.</li>
+            <li><b>Con la placa desenchufada</b>, pon el sensor con sus dos «ojos» mirando hacia fuera.</li>
+            <li><b>VCC</b> del sensor a <b>VIN</b> (son los 5 V que llegan por el USB) y <b>GND</b> a <b>GND</b>.</li>
+            <li><b>TRIG</b> a <b>D1</b>: por ahí la placa le dice «¡grita!».</li>
+            <li><b>ECHO</b> contesta con 5 V, y la placa sólo aguanta 3,3 V. Por eso va a <b>D2</b> pasando por la resistencia de <b>1 kΩ</b>, y de D2 sale la de <b>2 kΩ</b> a GND (o dos de 1 kΩ seguidas).</li>
+            <li>El zumbador: su pata <b>+</b> a <b>D8</b> y la otra a GND.</li>
+            <li>Enchufa el USB, apunta el sensor a la puerta… ¡y a cazar!</li>
+          </ol>
+          <div class="tip">
+            <p>¿Tu sensor es un <b>HC-SR04P</b> (pone 3.3V–5V)? Entonces VCC va a <b>3V3</b> y ECHO directo a <b>D2</b>, sin resistencias. ¿Tu placa tiene un pin <b>VU</b>? Da los mismos 5 V que VIN.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer wrap">
+      Laboratorio de inventos · versión <span data-version>1.0.0</span> · placa <span data-board-name>…</span>
+    </footer>
+  </body>
+</html>

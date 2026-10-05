@@ -1,0 +1,34 @@
+name: pruebas
+
+on:
+  push:
+    branches: [_ztool_main, main]
+  pull_request:
+
+jobs:
+  web:
+    name: Web, API y simulador (pytest)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements-dev.txt
+      - run: python -m playwright install --with-deps chromium
+      - run: pytest -v
+
+  firmware:
+    name: El firmware compila (NodeMCU)
+    runs-on: ubuntu-latest
+    env:
+      ESP8266_URL: https://arduino.esp8266.com/stable/package_esp8266com_index.json
+    steps:
+      - uses: actions/checkout@v4
+      - uses: arduino/setup-arduino-cli@v2
+      - name: Núcleo ESP8266
+        run: |
+          arduino-cli core update-index --additional-urls "$ESP8266_URL"
+          arduino-cli core install esp8266:esp8266 --additional-urls "$ESP8266_URL"
+      - name: Compilar
+        run: arduino-cli compile --fqbn esp8266:esp8266:nodemcuv2 --warnings all laboratorio

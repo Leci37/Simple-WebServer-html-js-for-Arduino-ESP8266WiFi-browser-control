@@ -1,0 +1,4 @@
+# Para las pruebas (pytest) y el navegador de las pruebas de las páginas.
+# Después: python -m playwright install chromium
+pytest>=7
+playwright>=1.40

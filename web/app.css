@@ -2387,3 +2387,868 @@ code {
   width: 72px;
   height: 72px;
 }
+
+
+/* ---------- v2: mejoras del juego (propuesta) ---------- */
+
+.game-frame .over-sprite {
+  position: static;
+  display: block;
+  width: 72px;
+  height: 72px;
+  margin: -4px auto 0;
+  cursor: default;
+}
+
+.stat-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 2px 0 12px;
+}
+
+.stat-chips span {
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  font-weight: 900;
+  font-size: 0.95rem;
+}
+
+.over-road {
+  position: relative;
+  height: 10px;
+  margin: 0 8px 6px;
+  border-radius: 5px;
+  background: rgba(35, 33, 74, 0.12);
+  overflow: hidden;
+}
+
+.over-road span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  border-radius: 5px;
+  background: var(--green);
+}
+
+.overlay-box .over-road-text {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.overlay-box .over-record {
+  font-weight: 800;
+}
+
+.start-mandos {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.start-mandos span {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 2px solid var(--line);
+  background: #fff;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 800;
+  text-decoration: line-through;
+}
+
+.start-mandos span.on {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.overlay-box .stars {
+  margin: 0 0 2px;
+  font-size: 2.2rem;
+  line-height: 1;
+  letter-spacing: 4px;
+}
+
+.stars .off {
+  filter: grayscale(1);
+  opacity: 0.3;
+}
+
+.signal {
+  display: grid;
+  grid-gap: 10px;
+  margin: 4px 0 10px;
+}
+
+.signal-row {
+  display: grid;
+  grid-template-columns: 84px 1fr 52px;
+  grid-gap: 10px;
+  align-items: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+}
+
+.signal-bar {
+  position: relative;
+  height: 14px;
+  border-radius: 7px;
+  background: var(--accent-soft);
+}
+
+.signal-bar i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  border-radius: 7px;
+  background: #ffb36b;
+  transition: width 0.08s;
+}
+
+.signal-bar i.hot {
+  background: var(--accent);
+}
+
+.signal-bar b {
+  position: absolute;
+  top: -5px;
+  bottom: -5px;
+  width: 3px;
+  margin-left: -1px;
+  border-radius: 2px;
+  background: var(--ink);
+}
+
+.signal-row output {
+  text-align: right;
+  color: var(--muted);
+}
+
+.signal-note {
+  margin: 0;
+  font-size: 0.85rem;
+}
+
+@media (max-width: 600px) and (orientation: portrait) {
+  .over-sprite,
+  .over-road,
+  .overlay-box .over-road-text {
+    display: none;
+  }
+}
+
+/* v2: en el juego, las pestañas van debajo del juego, que se queda siempre a la vista. */
+.game-tabs {
+  margin-top: 24px;
+}
+
+/* ---------- v3: las 12 ideas, dentro de los juegos ---------- */
+
+/* Lo escondido, escondido de verdad (aunque sea un botón o una caja con rejilla). */
+[hidden] {
+  display: none !important;
+}
+
+/* Los carteles: si no caben, se desliza (y si caben, van centrados). */
+.game-overlay {
+  align-items: flex-start;
+  overflow-y: auto;
+}
+
+.game-overlay.is-start {
+  padding-top: 58px;
+}
+
+.overlay-box {
+  margin: auto;
+}
+
+.overlay-box.wide {
+  max-width: 760px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-gap: 18px;
+}
+
+.ov-side {
+  border-left: 3px dashed var(--line);
+  padding-left: 18px;
+  text-align: left;
+}
+
+.ov-side h3 {
+  margin: 0 0 8px;
+  font-size: 1.05rem;
+}
+
+.game-frame .over-sprite {
+  width: 56px;
+  height: 56px;
+}
+
+.ov-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.ov-news {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: 0 0 12px;
+}
+
+.ov-news[hidden] {
+  display: none;
+}
+
+.ov-news span {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #ffd84d;
+  font-weight: 900;
+  font-size: 0.85rem;
+}
+
+[data-size="m"] .overlay-box {
+  padding: 12px 16px;
+}
+
+[data-size="m"] .overlay-box h2 {
+  font-size: 1.25rem;
+  margin-bottom: 6px;
+}
+
+[data-size="s"] .overlay-box.wide {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+[data-size="s"] .ov-side {
+  border-left: 0;
+  padding-left: 0;
+  border-top: 3px dashed var(--line);
+  padding-top: 12px;
+}
+
+[data-size="s"] .start-mandos,
+[data-size="s"] .over-sprite,
+[data-size="s"] .over-road,
+[data-size="s"] .over-road-text,
+[data-size="s"] .ov-corner .long {
+  display: none;
+}
+
+/* Idea 1 y 9: cuántos jugáis y a qué velocidad, en las esquinas del cartel. */
+.ov-corners[hidden] {
+  display: none;
+}
+
+.ov-corner {
+  position: absolute;
+  top: 10px;
+  z-index: 1;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: #fff;
+  border: 3px solid var(--line);
+  box-shadow: 0 4px 0 var(--shadow);
+}
+
+.ov-corner.left {
+  left: 10px;
+}
+
+.ov-corner.right {
+  right: 10px;
+}
+
+.ov-corner button {
+  min-height: 34px;
+  padding: 4px 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 900;
+  font-size: 0.82rem;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.ov-corner button[aria-pressed="true"] {
+  background: var(--accent);
+  color: #fff;
+}
+
+.ov-corner button[data-turtle="1"][aria-pressed="true"] {
+  background: #22c063;
+}
+
+/* Idea 3: el mundo, con flechas. */
+.world-pick {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.world-pick span {
+  min-width: 200px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: var(--accent-soft);
+  font-weight: 900;
+}
+
+.wp-arrow {
+  width: 44px;
+  height: 44px;
+  flex: none;
+  border: 3px solid var(--line);
+  border-radius: 50%;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-size: 1.4rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.overlay-box .world-lock {
+  margin: -4px 0 10px;
+  font-weight: 800;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+/* Idea 1: dos mundos, uno encima del otro (800 × 600). */
+.game-frame.duo,
+.game-frame.duo:fullscreen {
+  padding-top: 75%;
+}
+
+.game-frame.duo:fullscreen {
+  padding-top: 0;
+}
+
+.duo-crown {
+  margin: 0;
+  font-size: 2.4rem;
+  line-height: 1.1;
+}
+
+.duo-score {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 10px;
+  margin: 6px 0 14px;
+}
+
+.duo-p {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px;
+  border-radius: 16px;
+  border: 3px solid var(--line);
+  background: #fff;
+}
+
+.duo-p.win {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.duo-p span {
+  font-size: 1.7rem;
+  font-weight: 900;
+  line-height: 1.1;
+}
+
+.duo-p small {
+  color: var(--muted);
+  font-weight: 800;
+}
+
+.duck-btn {
+  min-height: 64px;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Idea 8: la zona de agacharse, en la barra de la mano. */
+.signal-bar em {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 25%;
+  background: rgba(139, 92, 246, 0.25);
+}
+
+.signal-bar i.duck {
+  background: #8b5cf6;
+}
+
+/* Idea 2: elegir Chispa. */
+.skins {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(92px, 1fr));
+  grid-gap: 10px;
+}
+
+.skin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 4px 10px;
+  border: 3px solid var(--line);
+  border-radius: 18px;
+  background: var(--card);
+  box-shadow: 0 5px 0 var(--shadow);
+  color: var(--ink);
+  font: inherit;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.skin canvas {
+  width: 64px;
+  height: 64px;
+}
+
+.skin small {
+  padding: 1px 8px;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.skin[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+
+.skin[aria-pressed="true"] small {
+  color: var(--accent-dark);
+}
+
+.skin.locked {
+  cursor: not-allowed;
+}
+
+.skin.locked canvas {
+  filter: grayscale(1);
+  opacity: 0.4;
+}
+
+.skin.locked small {
+  background: var(--ink);
+  color: #fff;
+}
+
+.bank {
+  margin: 14px 0 0;
+  font-weight: 800;
+}
+
+/* Idea 6: pegatinas. */
+.stickers {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-gap: 10px;
+}
+
+.sticker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 96px;
+  padding: 8px 6px;
+  border: 3px dashed var(--line);
+  border-radius: 16px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.sticker .st-ico {
+  font-size: 1.7rem;
+  line-height: 1;
+  filter: grayscale(1);
+  opacity: 0.5;
+}
+
+.sticker b {
+  font-size: 0.85rem;
+  line-height: 1.15;
+}
+
+.sticker small {
+  font-size: 0.72rem;
+  line-height: 1.2;
+}
+
+.sticker.got {
+  border: 3px solid var(--accent);
+  background: #fff;
+  color: var(--ink);
+  box-shadow: 0 4px 0 var(--shadow);
+  transform: rotate(-3deg);
+}
+
+.sticker.got:nth-child(even) {
+  transform: rotate(2deg);
+}
+
+.sticker.got .st-ico {
+  filter: none;
+  opacity: 1;
+}
+
+.sticker.got small {
+  color: var(--accent-dark);
+  font-weight: 800;
+}
+
+/* Idea 5: los récords de la clase. */
+.class-table {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-gap: 4px;
+}
+
+.class-table li {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr) auto;
+  grid-gap: 8px;
+  align-items: center;
+  padding: 5px 10px;
+  border-radius: 10px;
+  font-weight: 800;
+}
+
+.class-table li:first-child {
+  background: var(--accent-soft);
+  font-weight: 900;
+}
+
+.class-table li.me {
+  background: #ffd84d;
+}
+
+.class-table li.empty {
+  color: var(--muted);
+}
+
+.class-in {
+  margin: 0 0 6px;
+  font-weight: 800;
+}
+
+.class-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 0 0 6px;
+}
+
+.class-form input {
+  flex: 1 1 110px;
+  min-width: 0;
+  min-height: 44px;
+  padding: 6px 12px;
+  border: 3px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--ink);
+  font: inherit;
+  font-weight: 800;
+}
+
+.class-form input:focus {
+  outline: 3px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.class-form .btn {
+  min-height: 44px;
+  padding: 6px 14px;
+}
+
+.class-note {
+  margin: 8px 0 0;
+  font-size: 0.85rem;
+}
+
+.overlay-box .class-note {
+  margin: 6px 0 8px;
+}
+
+.linkish {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--accent-dark);
+  font: inherit;
+  font-weight: 800;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.cast-world {
+  color: var(--muted);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+/* Idea 7: los bloques «cuando…», con sombrero, como el de «al pulsar ▶». */
+.bk-c-top.bk-hat-top {
+  border-radius: 28px 28px 0 0;
+  padding-top: 14px;
+}
+
+.bk-c-top.bk-hat-top::before {
+  display: none;
+}
+
+.bk.cat-eventos {
+  color: #3b2a00;
+  text-shadow: none;
+}
+
+/* Idea 10: el duelo de palmadas (sonómetro). */
+.duel-teams {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 10px;
+  margin: 12px 0;
+}
+
+.duel-team {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border: 3px solid var(--line);
+  border-radius: 18px;
+  background: var(--card);
+  transition: box-shadow 0.2s, background 0.2s;
+}
+
+.dt-name {
+  font-weight: 900;
+}
+
+.dt-score {
+  font-size: 2.2rem;
+  font-weight: 900;
+  line-height: 1.05;
+}
+
+.dt-last {
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.duel-team.red.turn {
+  border-color: var(--red);
+  box-shadow: 0 0 0 5px rgba(255, 79, 79, 0.22);
+}
+
+.duel-team.green.turn {
+  border-color: var(--green);
+  box-shadow: 0 0 0 5px rgba(34, 212, 123, 0.25);
+}
+
+.duel-team.red.lead {
+  background: #ffe6e6;
+}
+
+.duel-team.green.lead {
+  background: #dcf7e8;
+}
+
+.duel-status {
+  min-height: 1.5em;
+  margin: 0;
+  font-weight: 800;
+}
+
+.duel .btn {
+  margin-top: 14px;
+}
+
+/* Idea 11: la caza contrarreloj (fantasmas). */
+.hunt-clock {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.hunt-clock[hidden] {
+  display: none;
+}
+
+.hunt-time {
+  padding: 6px 14px;
+  border-radius: 16px;
+  background: var(--accent);
+  color: #17123a;
+  font-size: 1.6rem;
+  font-weight: 900;
+  font-variant-numeric: tabular-nums;
+  box-shadow: 0 4px 0 var(--accent-dark);
+}
+
+.hunt-time.hurry {
+  background: var(--red);
+  color: #fff;
+  box-shadow: 0 4px 0 #c43535;
+}
+
+.hunt-score {
+  padding: 4px 12px;
+  border-radius: 999px;
+  border: 3px solid var(--line);
+  background: var(--card);
+  font-weight: 900;
+}
+
+.hunt-race {
+  border-top: 3px dashed var(--line);
+  margin-top: 8px;
+}
+
+/* Idea 12: luz roja, luz verde (semáforo). */
+.rl {
+  grid-column: 1 / -1;
+}
+
+.rl-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.rl-head > div {
+  flex: 1 1 260px;
+}
+
+.rl-head h2 {
+  margin: 0 0 4px;
+}
+
+.rl-head p {
+  margin: 0;
+}
+
+.rl-state {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 64px;
+  margin: 16px 0 0;
+  padding: 10px 16px;
+  border-radius: 20px;
+  background: var(--accent-soft);
+  font-size: 1.15rem;
+  font-weight: 900;
+  text-align: center;
+  transition: background 0.2s;
+}
+
+.rl-state.go {
+  background: var(--green);
+  font-size: 1.7rem;
+}
+
+.rl-state.wait {
+  background: var(--yellow);
+  font-size: 1.7rem;
+}
+
+.rl-state.stop {
+  background: var(--red);
+  color: #fff;
+  font-size: 1.7rem;
+}
+
+.rl-state.back {
+  background: #23214a;
+  color: #fff;
+}
+
+.rl-state.end {
+  background: #ffd84d;
+  font-size: 1.5rem;
+}
+
+.rl-track {
+  position: relative;
+  height: 60px;
+  margin: 16px 0 6px;
+  border: 3px solid var(--line);
+  border-radius: 18px;
+  background: repeating-linear-gradient(90deg, var(--accent-soft) 0 28px, #fff 28px 56px);
+}
+
+.rl-walker {
+  position: absolute;
+  top: 50%;
+  left: 6%;
+  font-size: 2rem;
+  line-height: 1;
+  transform: translate(-50%, -50%) scaleX(-1);
+  transition: left 0.25s;
+}
+
+.rl-goal {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  font-size: 1.7rem;
+  line-height: 1;
+  transform: translateY(-50%);
+}
+
+.rl-labels {
+  display: flex;
+  justify-content: space-between;
+  color: var(--muted);
+  font-size: 0.85rem;
+  font-weight: 800;
+}

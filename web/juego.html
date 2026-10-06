@@ -7,6 +7,8 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="/app.css" />
     <script src="/app.js" defer></script>
+    <script src="/bloques.js" defer></script>
+    <script src="/esquema.js" defer></script>
     <script src="/juego.js" defer></script>
   </head>
   <body class="theme-game">
@@ -23,35 +25,96 @@
         <div class="game-frame" id="frame">
           <canvas id="game" aria-label="El juego: Chispa corre y salta"></canvas>
           <div class="game-overlay" id="overlay">
+            <div class="ov-corners" id="start-corners">
+              <div class="ov-corner left" role="group" aria-label="¿Cuántos jugáis?">
+                <button type="button" data-players="1" aria-pressed="true">👤 1<span class="long"> jugador</span></button>
+                <button type="button" data-players="2" aria-pressed="false">👥 2<span class="long"> jugadores</span></button>
+              </div>
+              <div class="ov-corner right" role="group" aria-label="¿A qué velocidad?">
+                <button type="button" data-turtle="1" aria-pressed="false">🐢 Tortuga<span class="long"> · 5 vidas</span></button>
+                <button type="button" data-turtle="0" aria-pressed="true">🐇 Normal</button>
+              </div>
+            </div>
+
             <div class="overlay-box" id="screen-start">
               <h2>¡Salta, Chispa!</h2>
-              <p>Esquiva los deberes, el brócoli y el libro de mates… y llega hasta la <b>Súper Cosechadora</b>.</p>
+              <div class="world-pick">
+                <button class="wp-arrow" type="button" id="world-prev" aria-label="Mundo anterior">‹</button>
+                <span id="world-name">Mundo 1 · El campo 🌵</span>
+                <button class="wp-arrow" type="button" id="world-next" aria-label="Mundo siguiente">›</button>
+              </div>
+              <p class="world-lock" id="world-lock" hidden></p>
               <button class="btn btn-go" type="button" id="start-btn"><span class="ico">▶</span>¡A jugar!</button>
-              <p class="small">o pulsa tu mando: el botón de la placa, una palmada…</p>
+              <div class="start-mandos" id="start-mandos" aria-label="Con qué puedes saltar"></div>
             </div>
-            <div class="overlay-box" id="screen-over" hidden>
-              <h2 id="over-title">¡Te ha pillado!</h2>
-              <p class="big-score" id="over-score"></p>
-              <p id="over-record"></p>
-              <button class="btn btn-go" type="button" id="over-again"><span class="ico">↻</span>¡Otra vez!</button>
+
+            <div class="overlay-box wide" id="screen-over" hidden>
+              <div class="ov-main">
+                <canvas class="over-sprite" id="over-sprite" data-sprite="cactus" aria-hidden="true"></canvas>
+                <h2 id="over-title">¡Te ha pillado!</h2>
+                <div class="stat-chips" id="over-score"></div>
+                <div class="over-road"><span id="over-road"></span></div>
+                <p class="over-road-text" id="over-road-text"></p>
+                <p class="over-record" id="over-record"></p>
+                <div class="ov-news" id="over-news" hidden></div>
+                <div class="ov-actions">
+                  <button class="btn btn-go" type="button" id="over-again"><span class="ico">↻</span>¡Otra vez!</button>
+                  <button class="btn btn-soft" type="button" id="over-menu">☰ Menú</button>
+                </div>
+              </div>
+              <div class="ov-side"></div>
             </div>
-            <div class="overlay-box" id="screen-win" hidden>
-              <h2>🏆 ¡Has saltado la Súper Cosechadora!</h2>
-              <p class="big-score" id="win-score"></p>
-              <p>Fin de la demo. ¿Te atreves a hacerlo con más rayos?</p>
-              <button class="btn btn-go" type="button" id="win-again"><span class="ico">↻</span>¡Otra vez!</button>
+
+            <div class="overlay-box wide" id="screen-win" hidden>
+              <div class="ov-main">
+                <p class="stars" id="win-stars"></p>
+                <h2>¡Has saltado la Súper Cosechadora!</h2>
+                <div class="stat-chips" id="win-score"></div>
+                <p id="win-next"></p>
+                <div class="ov-news" id="win-news" hidden></div>
+                <div class="ov-actions">
+                  <button class="btn btn-go" type="button" id="win-again"><span class="ico">↻</span>¡Otra vez!</button>
+                  <button class="btn" type="button" id="win-world" hidden></button>
+                  <button class="btn btn-soft" type="button" id="win-menu">☰ Menú</button>
+                </div>
+              </div>
+              <div class="ov-side"></div>
+            </div>
+
+            <div class="overlay-box" id="screen-duo" hidden>
+              <p class="duo-crown" id="duo-crown">🏆</p>
+              <h2 id="duo-title">¡Gana el jugador 1!</h2>
+              <div class="duo-score">
+                <div class="duo-p" id="duo-p1"></div>
+                <div class="duo-p" id="duo-p2"></div>
+              </div>
+              <div class="ov-news" id="duo-news" hidden></div>
+              <div class="ov-actions">
+                <button class="btn btn-go" type="button" id="duo-again"><span class="ico">↻</span>¡Revancha!</button>
+                <button class="btn btn-soft" type="button" id="duo-menu">☰ Menú</button>
+              </div>
             </div>
           </div>
         </div>
 
         <div class="game-bar">
           <button class="btn jump-btn" type="button" id="jump-btn"><span class="ico">⤴</span>¡Salta!</button>
+          <button class="btn jump-btn" type="button" id="jump2-btn" hidden><span class="ico">⤴</span>Jugador 2</button>
+          <button class="btn btn-soft duck-btn" type="button" id="duck-btn"><span class="ico">⤵</span>Agáchate</button>
           <button class="btn btn-soft" type="button" id="sound-btn">🔊 Con sonido</button>
           <button class="btn btn-soft" type="button" id="full-btn">⛶ Pantalla completa</button>
         </div>
         <p class="rotate-hint">📱 Gira el móvil para ver el juego más grande.</p>
       </section>
 
+      <nav class="tabs game-tabs" role="tablist" aria-label="¿Qué quieres hacer?">
+        <button class="tab" role="tab" data-tab="jugar" aria-controls="panel-jugar"><span class="ico">🎮</span>Jugar</button>
+        <button class="tab" role="tab" data-tab="programar" aria-controls="panel-programar"><span class="ico">🧩</span>Programar</button>
+        <button class="tab" role="tab" data-tab="montar" aria-controls="panel-montar"><span class="ico">🔌</span>Montar</button>
+      </nav>
+
+      <!-- 🎮 Jugar -->
+      <section id="panel-jugar" class="panel" role="tabpanel" aria-label="Jugar">
       <div class="play-grid">
         <section class="card">
           <h2>¿Con qué saltas?</h2>
@@ -63,33 +126,106 @@
               <span class="mando-ico">👏</span><b>Palmada</b><span>el micrófono te oye</span>
             </button>
             <button class="mando" type="button" data-mando="mano">
-              <span class="mando-ico">👋</span><b>Mano</b><span>a menos de 15 cm del sensor</span>
+              <span class="mando-ico">👋</span><b>Mano</b><span>a menos de 15 cm salta; hasta 30, se agacha</span>
             </button>
           </div>
           <p class="mando-live" id="mando-live" aria-live="polite">Buscando la placa…</p>
-          <p class="muted">Y siempre vale tocar el juego o pulsar la barra espaciadora. Si la palmada no te oye, baja el rojo en el <a href="/sonometro">sonómetro</a>.</p>
+          <div class="signal" aria-label="Lo que oye y ve la placa">
+            <div class="signal-row"><span>👏 Ruido</span><div class="signal-bar"><i id="sig-sound"></i><b id="sig-sound-mark" style="left: 70%"></b></div><output id="sig-sound-out">0</output></div>
+            <div class="signal-row"><span>👋 Mano</span><div class="signal-bar"><em></em><i id="sig-hand"></i><b style="left: 75%"></b></div><output id="sig-hand-out">—</output></div>
+            <p class="muted signal-note">Para saltar, la barra tiene que pasar la raya: el rojo del sonómetro o 15 cm del sensor. En la zona morada (de 15 a 30 cm), Chispa se agacha.</p>
+          </div>
+          <p class="muted">Y siempre vale tocar el juego o la barra espaciadora. Para agacharte: la flecha ↓ o el botón «Agáchate». Con dos jugadores, el 1 salta con el botón (o la tecla A) y el 2 con palmadas (o la L).</p>
         </section>
 
         <section class="card">
-          <h2>Lo que te vas a encontrar</h2>
-          <ul class="cast">
-            <li><canvas data-sprite="cactus"></canvas><b>Cactus</b><span>pinchan</span></li>
-            <li><canvas data-sprite="deberes"></canvas><b>Deberes</b><span>¡hoy no!</span></li>
-            <li><canvas data-sprite="brocoli"></canvas><b>Brócoli</b><span>desde 120 m</span></li>
-            <li><canvas data-sprite="mates"></canvas><b>Libro de mates</b><span>muy alto</span></li>
-            <li><canvas data-sprite="coche"></canvas><b>Coche</b><span>¡va con prisa!</span></li>
-            <li><canvas data-sprite="nubarron"></canvas><b>Nubarrón</b><span>tira exámenes</span></li>
-            <li><canvas data-sprite="cosechadora"></canvas><b>Súper Cosechadora</b><span>al final, en 800 m</span></li>
-          </ul>
+          <h2>Elige tu Chispa</h2>
+          <div class="skins" id="skins"></div>
+          <p class="bank" id="bank"></p>
+        </section>
+
+        <section class="card">
+          <h2>Pegatinas <span class="challenge-count" id="sticker-count"></span></h2>
+          <ul class="stickers" id="stickers"></ul>
+        </section>
+
+        <section class="card">
+          <h2>🏆 Récords de la clase</h2>
+          <ol class="class-table" id="class-table"></ol>
+          <p class="muted class-note" id="class-where"></p>
+        </section>
+
+        <section class="card">
+          <h2>Lo que te vas a encontrar <span class="cast-world" id="cast-world"></span></h2>
+          <ul class="cast" id="cast-list"></ul>
           <h3>Lo que te ayuda</h3>
           <ul class="cast">
             <li><canvas data-sprite="escudo"></canvas><b>Escudo</b><span>aguanta un golpe</span></li>
             <li><canvas data-sprite="cohete"></canvas><b>Cohete</b><span>saltas volando</span></li>
             <li><canvas data-sprite="reloj"></canvas><b>Cámara lenta</b><span>todo va despacio</span></li>
-            <li><canvas data-sprite="bolt"></canvas><b>Rayos</b><span>¡cógelos todos!</span></li>
+            <li><canvas data-sprite="bolt"></canvas><b>Rayos</b><span>abren Chispas nuevas</span></li>
           </ul>
         </section>
       </div>
+      </section>
+
+      <!-- 🧩 Programar -->
+      <section id="panel-programar" class="panel" role="tabpanel" aria-label="Programar" hidden>
+        <div class="helper">
+          <div class="chispa" data-mood="happy"></div>
+          <div class="bubble">
+            <p>
+              Los bloques amarillos <b>⚡ «cuando Chispa…»</b> se ponen en marcha cada vez que pasa algo en el juego, y
+              puede haber varios a la vez. Los azules miran la partida. Pulsa <b>▶ ¡Ejecutar!</b>, juega arriba… ¡y la
+              placa hará lo que tú digas!
+            </p>
+          </div>
+        </div>
+
+        <div id="editor"></div>
+
+        <div class="card retos">
+          <h2>🏆 Retos <span class="challenge-count" data-challenge-count="juego"></span></h2>
+          <ul class="challenges" data-key="juego">
+            <li><button class="challenge" type="button" data-id="1"><span class="stars">⭐</span><span>Con «⚡ cuando Chispa salte», que la luz verde parpadee en cada salto.</span><span class="check"></span></button></li>
+            <li><button class="challenge" type="button" data-id="2"><span class="stars">⭐</span><span>Que la placa pite cuando Chispa choca.</span><span class="check"></span></button></li>
+            <li><button class="challenge" type="button" data-id="3"><span class="stars">⭐⭐</span><span>Cuando Chispa coja un rayo, toca una nota.</span><span class="check"></span></button></li>
+            <li><button class="challenge" type="button" data-id="4"><span class="stars">⭐⭐</span><span>Si Chispa tiene el cohete, enciende el amarillo; si no, apágalo.</span><span class="check"></span></button></li>
+            <li><button class="challenge" type="button" data-id="6"><span class="stars">⭐⭐</span><span>Con cada fase de la Cosechadora, enciende una luz más: verde, amarillo y rojo.</span><span class="check"></span></button></li>
+            <li><button class="challenge" type="button" data-id="5"><span class="stars">⭐⭐⭐</span><span>Una canción de victoria: cuando ganes a la Cosechadora, toca do, mi y sol.</span><span class="check"></span></button></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 🔌 Montar -->
+      <section id="panel-montar" class="panel" role="tabpanel" aria-label="Montar" hidden>
+        <div class="card">
+          <h2>Lo que necesitas</h2>
+          <ul class="parts">
+            <li><span class="n">1</span>La placa: el botón FLASH ya viene en ella</li>
+            <li><span class="n">1</span>Para saltar con una palmada: el micrófono del sonómetro</li>
+            <li><span class="n">1</span>Para saltar (o agacharte) con la mano: el sensor del detector de fantasmas</li>
+            <li><span class="n">3</span>Las luces del semáforo, si quieres que acompañen la partida</li>
+          </ul>
+          <p class="muted">No hay que montar nada nuevo: el juego usa lo que ya tengas puesto. Para guardar los récords de la clase en la placa hace falta un firmware que los guarde; si no, se guardan en la tableta.</p>
+        </div>
+
+        <div class="card">
+          <h2>Cómo se conecta</h2>
+          <div class="wiring" id="wiring"></div>
+          <table class="pins">
+            <thead>
+              <tr><th>Mando</th><th>Qué es</th><th>Pin</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>🔘 Botón</td><td>el botón FLASH de la placa</td><td><span class="pin">D3</span></td></tr>
+              <tr><td>👏 Palmada</td><td>OUT del micrófono</td><td><span class="pin">A0</span></td></tr>
+              <tr><td>👋 Mano</td><td>TRIG y ECHO del sensor</td><td><span class="pin">D1</span> <span class="pin">D2</span></td></tr>
+              <tr><td>🚦 Las luces</td><td>igual que en el semáforo</td><td><span class="pin">D5</span> <span class="pin">D6</span> <span class="pin">D7</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
     </main>
 
     <footer class="footer wrap">

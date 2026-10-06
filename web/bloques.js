@@ -33,6 +33,7 @@
     sonido: "🔊 Sonido",
     control: "🔁 Control",
     sensores: "📡 Sensores",
+    eventos: "⚡ Eventos",
   };
   var STOP = { stop: true };
 
@@ -420,7 +421,7 @@
     var outer;
     if (def.c) {
       outer = el("div", "bk-c cat-" + def.cat);
-      head = el("div", "bk bk-c-top cat-" + def.cat);
+      head = el("div", "bk bk-c-top cat-" + def.cat + (def.hat ? " bk-hat-top" : ""));
       var mouth = el("div", "bk-mouth");
       var inner = el("div", "bk-stack");
       inner.setAttribute("data-list", node.id);
@@ -532,13 +533,14 @@
     }
     // Debajo de un «por siempre» no se llega nunca: lo nuevo va dentro.
     var last = this.program[this.program.length - 1];
-    if (last && BLOCKS[last.type].cap) return last.body;
+    if (last && (BLOCKS[last.type].cap || BLOCKS[last.type].hat)) return last.body;
     return this.program;
   };
 
   Editor.prototype.add = function (type) {
     if (this.running) return this.busy();
-    this.targetList().push(newNode(type));
+    // v3: los «cuando…» van siempre sueltos, en el programa de arriba.
+    (BLOCKS[type].hat ? this.program : this.targetList()).push(newNode(type));
     this.changed();
     var head = this.elements["b" + seq];
     if (head && head.scrollIntoView) head.scrollIntoView({ block: "nearest" });
@@ -719,9 +721,24 @@
       if (this.options.onStart) await this.options.onStart();
       // Cada vez, desde las luces apagadas: así se ve bien qué hace el programa.
       await this.call("light", { color: "all", on: 0 });
-      await this.runList(this.program);
+      // v3: cada «cuando…» espera por su cuenta, a la vez que lo demás.
+      var self = this;
+      var hats = this.program.filter(function (n) {
+        return BLOCKS[n.type].hat;
+      });
+      var rest = this.program.filter(function (n) {
+        return !BLOCKS[n.type].hat;
+      });
+      await Promise.all(
+        [this.runList(rest)].concat(
+          hats.map(function (n) {
+            return self.runList([n]);
+          })
+        )
+      );
       this.say("✓ ¡Terminado! ¿Lo cambias y lo pruebas otra vez?");
     } catch (err) {
+      if (!this.stopped) this.stop();
       if (err === STOP) this.say("■ Parado.");
       else this.say("😕 " + (err && err.message ? err.message : "Algo ha fallado") + ". ¿Sigues conectado a la placa?");
     }

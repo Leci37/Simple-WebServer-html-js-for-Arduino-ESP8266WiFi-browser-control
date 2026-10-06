@@ -114,6 +114,12 @@ def test_the_records_rules_are_the_same_in_firmware_and_simulator():
         assert message in sim_py
 
 
+def test_the_worlds_are_the_ones_the_game_has():
+    game = (ROOT / "web" / "juego.js").read_text(encoding="utf-8")
+    order = re.search(r"var WORLD_ORDER = \[([^\]]*)\]", game).group(1)
+    assert re.findall(r'"(\w+)"', order) == simulador.WORLD_NAMES
+
+
 HARNESS = r"""
 #include <stdio.h>
 #include <string.h>

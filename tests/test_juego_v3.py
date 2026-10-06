@@ -211,6 +211,19 @@ def test_with_two_players_the_board_does_not_beep(open_page, sim):
     assert sim.board.beeps == []
 
 
+def test_starting_lets_go_of_the_start_button(open_page):
+    # Si «¡A jugar!» se quedara con el foco, ya escondido, la barra espaciadora
+    # le llegaría a él y volvería a empezar en vez de saltar (pasaba en el CI).
+    page = open_page(GAME, width=1280)
+    focused = page.evaluate(
+        "() => { document.querySelector('#start-btn').click(); return document.activeElement.id || document.activeElement.tagName; }"
+    )
+    assert focused == "BODY"
+    assert state(page)["mode"] == "play"
+    page.keyboard.press("Space")
+    wait_for(lambda: state(page)["jumps"] == 1)
+
+
 # ---------- Idea 3: mundos ----------
 
 

@@ -2340,8 +2340,26 @@
     // v3: los carteles se acomodan a lo que mide el juego.
     var frameEl = Lab.$("#frame");
     if (frameEl) frameEl.setAttribute("data-size", box.height < 270 ? "s" : box.height < 360 ? "m" : "l");
-    // Y a lo ancho: en un móvil de pie, las dos esquinas del inicio no caben con todo su texto.
-    if (frameEl) frameEl.setAttribute("data-width", box.width < 350 ? "xs" : box.width < 560 ? "s" : "l");
+    fitCorners();
+  }
+
+  // A lo ancho, las dos esquinas del inicio no se pueden pisar. Cada aparato
+  // tiene sus letras (y sus emojis), así que no se adivina: se prueba del texto
+  // más largo al más corto (sólo los dibujos) hasta que caben.
+  var WIDTHS = ["l", "s", "xs", "xxs"];
+  function fitCorners() {
+    var frameEl = Lab.$("#frame");
+    if (!frameEl) return;
+    var width = frameEl.getBoundingClientRect().width;
+    var from = width < 350 ? 2 : width < 560 ? 1 : 0;
+    var left = Lab.$(".ov-corner.left", frameEl);
+    var right = Lab.$(".ov-corner.right", frameEl);
+    for (var i = from; i < WIDTHS.length; i++) {
+      frameEl.setAttribute("data-width", WIDTHS[i]);
+      // Escondidas (fuera del inicio), no hay nada que medir: ya se medirán al volver.
+      if (!left || !right || !left.getClientRects().length) return;
+      if (left.getBoundingClientRect().right + 6 <= right.getBoundingClientRect().left) return;
+    }
   }
 
   // ---------- Sonidos (en el móvil o el ordenador) ----------
@@ -2552,6 +2570,11 @@
     // El respiro antes de poder empezar es sólo al acabar una partida.
     screenAt = name === "start" ? 0 : Date.now();
     var overlay = Lab.$("#overlay");
+    // Al esconder un cartel, el botón que tenía el foco (el de empezar) lo
+    // suelta ya: si no, la barra espaciadora le llegaría a él, escondido, y
+    // volvería a empezar en vez de saltar.
+    var focused = document.activeElement;
+    if (!name && focused && focused !== document.body && overlay.contains(focused)) focused.blur();
     overlay.hidden = !name;
     overlay.classList.toggle("is-start", name === "start");
     Lab.$("#start-corners").hidden = name !== "start";
@@ -2597,6 +2620,7 @@
     if (name === "duo") paintDuo();
     if (name === "start") {
       paintStart();
+      fitCorners();
       Lab.$("#start-btn").focus({ preventScroll: true });
     }
   }
@@ -2732,8 +2756,9 @@
         return;
       }
       if (key !== " " && key !== "ArrowUp" && key !== "Enter") return;
-      // En un botón, Enter y espacio son del botón (encender un mando, empezar).
-      if (tag === "BUTTON" && key !== "ArrowUp") return;
+      // En un botón, Enter y espacio son del botón (encender un mando, empezar)…
+      // si se ve: uno escondido no es lo que se quería pulsar.
+      if (tag === "BUTTON" && key !== "ArrowUp" && e.target.getClientRects().length) return;
       e.preventDefault();
       if (!e.repeat) press("pantalla");
     });

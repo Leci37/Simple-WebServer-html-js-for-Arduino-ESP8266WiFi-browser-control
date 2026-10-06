@@ -32,8 +32,11 @@ y crece con nueve ideas, y cada invento trae un juego nuevo.
   `farm` y `moon`). El alias se limpia igual en la placa y en el simulador:
   una prueba compila el del firmware en el ordenador y los compara.
 - **Arreglado sobre el diseño**, con su prueba cada uno:
-  - en el móvil, los botones de las esquinas del inicio se pisaban y el cartel
-    se salía por los lados;
+  - en el móvil, los botones de las esquinas del inicio se pisaban (ahora se
+    mide si caben, de todo el texto a sólo los dibujos, porque cada aparato
+    tiene sus letras) y el cartel se salía por los lados;
+  - al empezar, el botón «¡A jugar!» se quedaba con el foco, y la barra
+    espaciadora podía volver a empezar la partida en vez de saltar;
   - con dos jugadores, la placa pitaba (y el micrófono lo oía como palmadas
     del jugador 2) y la mano agachaba al jugador 1;
   - si mientras jugabas otros llegaban más lejos, el final decía «Guardado en

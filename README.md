@@ -209,7 +209,7 @@ programa; el esquema se desliza de lado; el juego pide girar el móvil.
 - **El simulador** (`tools/simulador.py`): la misma lógica que el firmware, en
   Python, con un micrófono y un sensor de mentira. Sirve para tocar la web sin
   placa y para las pruebas.
-- **Las pruebas:** 159, con pytest y Chromium: que el firmware, el simulador y
+- **Las pruebas:** 160, con pytest y Chromium: que el firmware, el simulador y
   la web dicen lo mismo (las órdenes, la forma del estado, los ajustes; el
   alias de los récords se compara compilando el del firmware), los bloques
   ejecutándose (también los «⚡ cuando…» a la vez), el juego con cada mando y
@@ -364,7 +364,7 @@ in the board's flash (/api/records, /api/record). The board hosts its own Wi-Fi
 with a captive portal and serves a kid-friendly web app (Spanish) with live
 controls, wiring diagrams and a Scratch-like block editor that runs sequences
 on the board. No external Arduino libraries are needed. A JSON/CORS API makes
-it scriptable; a Python simulator and 159 pytest/Playwright tests cover the
+it scriptable; a Python simulator and 160 pytest/Playwright tests cover the
 web, the API, the records and the games. How it would join the zlecitool platform (boards
 as core "devices", schools as organisations, AI that writes block programs):
 docs/PLATAFORMA.md.

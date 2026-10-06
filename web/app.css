@@ -2648,47 +2648,57 @@ code {
 [data-size="s"] .over-road-text,
 [data-size="s"] .ov-corner .long,
 [data-width="s"] .ov-corner .long,
-[data-width="xs"] .ov-corner .long {
+[data-width="xs"] .ov-corner .long,
+[data-width="xxs"] .ov-corner .long,
+[data-width="xxs"] .ov-corner .word {
   display: none;
 }
 
 /* En el móvil más estrecho, ni así caben: botones más pequeños. */
-[data-width="xs"] .ov-corner {
+[data-width="xs"] .ov-corner,
+[data-width="xxs"] .ov-corner {
   top: 6px;
   gap: 2px;
   padding: 3px;
 }
 
-[data-width="xs"] .ov-corner.left {
+[data-width="xs"] .ov-corner.left,
+[data-width="xxs"] .ov-corner.left {
   left: 6px;
 }
 
-[data-width="xs"] .ov-corner.right {
+[data-width="xs"] .ov-corner.right,
+[data-width="xxs"] .ov-corner.right {
   right: 6px;
 }
 
-[data-width="xs"] .ov-corner button {
+[data-width="xs"] .ov-corner button,
+[data-width="xxs"] .ov-corner button {
   min-height: 30px;
   padding: 3px 8px;
   font-size: 0.75rem;
 }
 
 /* Y el cartel del inicio, con el mundo y sus flechas, tampoco cabría. */
-[data-width="xs"] .overlay-box {
+[data-width="xs"] .overlay-box,
+[data-width="xxs"] .overlay-box {
   max-width: calc(100% - 12px);
   padding: 12px 10px;
 }
 
-[data-width="xs"] .world-pick {
+[data-width="xs"] .world-pick,
+[data-width="xxs"] .world-pick {
   gap: 4px;
 }
 
-[data-width="xs"] .world-pick span {
+[data-width="xs"] .world-pick span,
+[data-width="xxs"] .world-pick span {
   min-width: 0;
   padding: 6px 10px;
 }
 
-[data-width="xs"] .wp-arrow {
+[data-width="xs"] .wp-arrow,
+[data-width="xxs"] .wp-arrow {
   width: 38px;
   height: 38px;
 }

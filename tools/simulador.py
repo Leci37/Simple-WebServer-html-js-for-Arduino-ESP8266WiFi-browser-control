@@ -29,7 +29,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_web import TYPES, WEB, url_for, web_files  # noqa: E402
 
 MODES = ["manual", "auto", "night", "sound", "ghost"]
-VERSION = "1.1.0"
+VERSION = "1.2.0"
 
 # Los récords de la clase (laboratorio/records.h y alias.h).
 RECORDS_MAX = 5

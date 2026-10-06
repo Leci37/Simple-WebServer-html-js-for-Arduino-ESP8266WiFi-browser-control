@@ -2312,6 +2312,8 @@
     // v3: los carteles se acomodan a lo que mide el juego.
     var frameEl = Lab.$("#frame");
     if (frameEl) frameEl.setAttribute("data-size", box.height < 270 ? "s" : box.height < 360 ? "m" : "l");
+    // Y a lo ancho: en un móvil de pie, las dos esquinas del inicio no caben con todo su texto.
+    if (frameEl) frameEl.setAttribute("data-width", box.width < 380 ? "xs" : box.width < 560 ? "s" : "l");
   }
 
   // ---------- Sonidos (en el móvil o el ordenador) ----------

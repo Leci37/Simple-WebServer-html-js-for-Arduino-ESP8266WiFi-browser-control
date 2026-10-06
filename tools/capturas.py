@@ -80,7 +80,8 @@ def main() -> int:
             shot(pg, "portada")
             pg.close()
 
-            pg = page(QUIET, "/semaforo", height=880)
+            # Con «Luz roja, luz verde» arriba, el semáforo entero pide más alto.
+            pg = page(QUIET, "/semaforo", height=1240)
             pg.click("[data-mode='auto']")
             pg.click("#walk-btn")
             pg.wait_for_selector("#walk-light.go", timeout=8000)
@@ -136,6 +137,101 @@ def main() -> int:
             pg.evaluate("Juego.prueba.rapido(1)")
             pg.wait_for_timeout(1300)
             shot(pg, "juego-cosechadora", "#frame")
+            pg.close()
+
+            # v3: el inicio, en la luna (con todo abierto, como si ya se hubieran ganado).
+            pg = page(QUIET, "/juego?prueba=1&semilla=5", height=760)
+            pg.evaluate("Juego.abrirTodo()")
+            pg.click("#world-next")
+            pg.click("#world-next")
+            pg.wait_for_timeout(1500)
+            shot(pg, "juego-inicio", "#frame")
+            pg.close()
+
+            # v3: dos jugadores, al empezar (cada uno con su cartel).
+            pg = page(QUIET, "/juego?prueba=1&semilla=7", height=900)
+            pg.click("[data-players='2']")
+            pg.click("#start-btn")
+            pg.evaluate("Juego.prueba.invencible(true)")
+            pg.wait_for_timeout(1300)
+            shot(pg, "juego-dos", "#frame")
+            pg.close()
+
+            # v3: el final de una partida que entra en los récords de la clase.
+            for alias, m, extra in (("Rayo", 906, ""), ("Cometa", 640, "&t=1"), ("Trueno", 512, "&w=granja"), ("Pulga", 330, "")):
+                sim(f"/api/record?alias={alias}&m={m}{extra}")
+            pg = page(QUIET, "/juego?prueba=1&semilla=3", height=760)
+            pg.click("#start-btn")
+            pg.evaluate("Juego.prueba.skipTo(290); Juego.prueba.rapido(2)")
+            pg.wait_for_selector("#screen-over:not([hidden])", timeout=40000)
+            pg.locator("[data-class-form] input").fill("Canguro")
+            pg.wait_for_timeout(600)
+            shot(pg, "juego-fin", "#frame")
+            pg.close()
+            sim("/api/records?clear=1")
+
+            # v3: la pestaña Jugar, con algunos colores y pegatinas ya ganados.
+            pg = page(QUIET, "/juego?prueba=1&semilla=3", height=900)
+            pg.evaluate(
+                "localStorage.setItem('lab.juego.rayosTotal', '64');"
+                "localStorage.setItem('lab.juego.pegatinas', JSON.stringify({deberes: 1, brocoli: 1, escudos: 1, cosechadora: 1}))"
+            )
+            pg.reload()
+            pg.wait_for_selector("[data-conn].online")
+            pg.click("[data-mando='mano']")
+            sim("/sim?sound=52&cm=22")
+            pg.wait_for_timeout(1200)
+            shot(pg, "juego-jugar", ".play-grid")
+            sim("/sim?sound=0&cm=-1")
+            pg.close()
+
+            # v3: programar el juego, con los bloques «⚡ cuando…» del ejemplo.
+            pg = page(QUIET, "/juego?prueba=1&semilla=3#programar", height=900)
+            pg.get_by_role("button", name="Ejemplo").click()
+            pg.wait_for_timeout(500)
+            shot(pg, "juego-bloques", "#editor")
+            pg.close()
+
+            # v3: el duelo de palmadas, en el turno del verde.
+            pg = page(QUIET, "/sonometro", height=900)
+            pg.click("#duel-btn")
+            # «:has-text» no distingue mayúsculas: «Ahora, el verde…» también sería «AHORA».
+            pg.wait_for_selector("#duel-status:has-text('Equipo rojo, AHORA')", timeout=8000)
+            sim("/sim?sound=88")
+            pg.wait_for_timeout(500)
+            sim("/sim?sound=0")
+            pg.wait_for_selector("#duel-status:has-text('Equipo verde, AHORA')", timeout=12000)
+            sim("/sim?sound=64")
+            pg.wait_for_timeout(700)
+            shot(pg, "duelo", ".card.duel")
+            sim("/sim?sound=0")
+            pg.close()
+
+            # v3: la caza contrarreloj, con tres fantasmas cazados.
+            pg = page(QUIET, "/fantasmas", height=820)
+            pg.click("#race-btn")
+            for _ in range(3):
+                sim("/sim?cm=8")
+                pg.wait_for_timeout(1300)
+                sim("/sim?cm=-1")
+                pg.wait_for_timeout(900)
+            sim("/sim?cm=35")
+            pg.wait_for_timeout(1500)
+            shot(pg, "contrarreloj", ".card:has(#hunt-clock)")
+            sim("/sim?cm=-1")
+            pg.close()
+
+            # v3: luz roja, luz verde, a medio camino hacia la placa.
+            sim("/sim?cm=90")
+            pg = page(QUIET, "/semaforo", height=900)
+            pg.wait_for_timeout(800)
+            pg.click("#rl-btn")
+            for cm in (80, 66, 54):
+                pg.wait_for_timeout(300)
+                sim(f"/sim?cm={cm}")
+            pg.wait_for_timeout(500)
+            shot(pg, "luzroja", ".card.rl")
+            sim("/sim?cm=-1")
             pg.close()
 
             # El móvil: tres pantallas de 390 una al lado de otra.

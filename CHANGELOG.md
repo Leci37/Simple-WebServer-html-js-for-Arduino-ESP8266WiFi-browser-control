@@ -1,5 +1,39 @@
 # CHANGELOG
 
+## 1.2.0 — 2026-10-06
+
+La web v3, la del diseño hecho en Claude Design: ¡Salta, Chispa! se rediseña
+y crece con nueve ideas, y cada invento trae un juego nuevo.
+
+- **¡Salta, Chispa!**: marcador nuevo (vidas y rayos juntos, los metros dentro
+  de la barra del camino, un anillo que se vacía por cada poder), pantallas
+  nuevas de inicio, de fin y de victoria, y las pestañas **Jugar · Programar ·
+  Montar** debajo del juego. Y además:
+  - **Dos jugadores** a la vez, con la pantalla partida: el 1 salta con el
+    botón FLASH y el 2, con palmadas.
+  - **Tres mundos**: el campo, la granja y la luna (donde se salta más alto),
+    cada uno con sus obstáculos. Ganar uno abre el siguiente.
+  - **Un final por fases**: pacas de paja, tres saltos seguidos y, por fin, el
+    cohete. Al ganar, de una a tres estrellas según los rayos.
+  - **Récords de la clase**: los cinco mejores, con un alias.
+  - **Colores de Chispa**, que se abren juntando rayos, y **nueve pegatinas**.
+  - **Agacharse**: con la mano entre 15 y 30 cm del sensor, la flecha ↓ o el
+    botón «Agáchate». El examen volador sólo se esquiva así.
+  - **Modo tortuga**: más despacio y con cinco vidas.
+  - **Programar el juego** con bloques: los nuevos «⚡ cuando Chispa salte,
+    choque, coja un rayo…» funcionan a la vez que el resto del programa.
+- **Duelo de palmadas** en el sonómetro, **caza contrarreloj** en el detector
+  de fantasmas y **luz roja, luz verde** en el semáforo (con el sensor de
+  distancia). Cada uno con su reto.
+- **La placa guarda los récords de la clase** en su memoria flash: duran
+  aunque se desenchufe o se vuelva a cargar el firmware. Órdenes nuevas:
+  `/api/records` (con `clear=1`, los borra) y `/api/record`. El alias se
+  limpia igual en la placa y en el simulador: una prueba compila el del
+  firmware en el ordenador y los compara.
+- La web en la placa pasa de 62 a 86 kB comprimidos. El firmware usa el 37 %
+  de la flash.
+- Pruebas para todo lo nuevo; capturas y README al día.
+
 ## 1.1.0 — 2026-10-05
 
 - **¡Salta, Chispa!**: un juego de correr y saltar como el del dinosaurio de

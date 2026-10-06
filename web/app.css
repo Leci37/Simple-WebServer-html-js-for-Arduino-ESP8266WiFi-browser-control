@@ -2646,8 +2646,31 @@ code {
 [data-size="s"] .over-sprite,
 [data-size="s"] .over-road,
 [data-size="s"] .over-road-text,
-[data-size="s"] .ov-corner .long {
+[data-size="s"] .ov-corner .long,
+[data-width="s"] .ov-corner .long,
+[data-width="xs"] .ov-corner .long {
   display: none;
+}
+
+/* En el móvil más estrecho, ni así caben: botones más pequeños. */
+[data-width="xs"] .ov-corner {
+  top: 6px;
+  gap: 2px;
+  padding: 3px;
+}
+
+[data-width="xs"] .ov-corner.left {
+  left: 6px;
+}
+
+[data-width="xs"] .ov-corner.right {
+  right: 6px;
+}
+
+[data-width="xs"] .ov-corner button {
+  min-height: 30px;
+  padding: 3px 8px;
+  font-size: 0.75rem;
 }
 
 /* Idea 1 y 9: cuántos jugáis y a qué velocidad, en las esquinas del cartel. */

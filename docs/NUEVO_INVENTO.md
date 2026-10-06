@@ -45,6 +45,9 @@ simulador y fallan si no coinciden.
 - Su dibujo en el esquema: una entrada en `PARTS` de
   [`web/esquema.js`](../web/esquema.js) con sus pines.
 - Su tarjeta en la portada ([`web/index.html`](../web/index.html)).
+- Un juego dentro de un invento (como el duelo de palmadas del sonómetro) es
+  una tarjeta más en «Jugar», con su reto en «Programar»; al acabar, devuelve
+  las luces al modo de su página.
 - Los textos, en español y para niños: frases cortas, de tú, y que digan qué hacer.
 
 ## 5. Antes de subir

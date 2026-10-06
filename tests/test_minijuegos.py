@@ -304,7 +304,10 @@ def test_the_ghost_race_counts_catches_for_a_minute_and_keeps_the_record(open_pa
     # El reloj grande se queda un momento con el resultado, y luego se va.
     assert page.locator("#hunt-clock").is_visible()
     assert text(page, "#hunt-time") == "⏱ 0:00"
-    run_for(page, 4000)
+    # Se acaba de ver el final (como mucho 500 ms después): a los 3,5 s más, sigue.
+    run_for(page, 3500)
+    assert page.locator("#hunt-clock").is_visible()
+    run_for(page, 500)
     assert page.locator("#hunt-clock").is_hidden()
 
     # Otra vuelta con menos fantasmas: el récord se queda como estaba.

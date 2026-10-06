@@ -40,6 +40,24 @@
         </div>
 
         <div class="play-grid">
+          <!-- v3 (idea 12): luz roja, luz verde -->
+          <div class="card rl">
+            <div class="rl-head">
+              <div>
+                <h2>🟢🔴 Luz roja, luz verde</h2>
+                <p class="muted">En verde, avanza hacia la placa. En rojo, ¡quieto! Si el sensor te ve moverte, vuelves a la salida.</p>
+              </div>
+              <button class="btn" type="button" id="rl-btn">¡Empezar!</button>
+            </div>
+            <div class="rl-state" id="rl-state">Ponte delante del sensor, a más de 40 cm de la placa, y pulsa «¡Empezar!»</div>
+            <div class="rl-track" aria-hidden="true">
+              <span class="rl-walker" id="rl-walker">🚶</span>
+              <span class="rl-goal">🏁</span>
+            </div>
+            <div class="rl-labels"><span>Salida</span><span id="rl-cm">📏 —</span><span>La placa</span></div>
+            <p class="muted small-note">Usa el sensor de distancia del <a href="/fantasmas#montar">detector de fantasmas</a>. Récord: <b id="rl-record">—</b></p>
+          </div>
+
           <div class="card stage">
             <div class="crossing">
               <div class="pole">
@@ -129,6 +147,7 @@
             <li><span class="n">3</span>Resistencias de 220 Ω (rojo, rojo, marrón)</li>
             <li><span class="n">1</span>Protoboard y unos cables</li>
             <li><span class="n">1</span>Zumbador pasivo, si quieres sonido (opcional)</li>
+            <li><span class="n">1</span>Para «Luz roja, luz verde»: el sensor de distancia del detector de fantasmas</li>
           </ul>
         </div>
 
@@ -168,7 +187,7 @@
     </main>
 
     <footer class="footer wrap">
-      Laboratorio de inventos · versión <span data-version>1.1.0</span> · placa <span data-board-name>…</span>
+      Laboratorio de inventos · versión <span data-version>1.2.0</span> · placa <span data-board-name>…</span>
     </footer>
   </body>
 </html>

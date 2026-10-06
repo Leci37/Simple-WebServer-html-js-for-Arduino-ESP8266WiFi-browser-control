@@ -116,7 +116,11 @@ document.addEventListener("DOMContentLoaded", function () {
     setTimeout(function () {
       flash.parentNode.removeChild(flash);
     }, 700);
-    Lab.toast("📸 ¡Fantasma cazado! Ya llevas " + caught + ".");
+    if (race) {
+      race.caught += 1;
+      paintRace();
+    }
+    Lab.toast(race ? "📸 ¡Uno más! Llevas " + race.caught + " en este minuto." : "📸 ¡Fantasma cazado! Ya llevas " + caught + ".");
   }
 
   $("#reset-caught").addEventListener("click", function () {
@@ -124,6 +128,51 @@ document.addEventListener("DOMContentLoaded", function () {
     Lab.store.set("fantasmas.cazados", 0);
     $("#caught").textContent = 0;
   });
+
+  // ---------- v3 (idea 11): caza contrarreloj ----------
+  // Un minuto para cazar todos los fantasmas que se pueda, con el tiempo y el
+  // marcador bien grandes.
+
+  var race = null;
+  var raceRecord = Lab.store.get("fantasmas.contrarreloj", null);
+  $("#race-record").textContent = raceRecord === null ? "—" : raceRecord;
+
+  $("#race-btn").addEventListener("click", function () {
+    if (race) return;
+    race = { start: Date.now(), caught: 0, timer: 0 };
+    this.disabled = true;
+    $("#hunt-clock").hidden = false;
+    $("#race-text").textContent = "¡A cazar! Lleva el detector hasta el 5, una y otra vez.";
+    paintRace();
+  });
+
+  function paintRace() {
+    if (!race) return;
+    var left = Math.max(0, 60 - (Date.now() - race.start) / 1000);
+    var s = Math.ceil(left);
+    $("#hunt-time").textContent = "⏱ " + Math.floor(s / 60) + ":" + ("0" + (s % 60)).slice(-2);
+    $("#hunt-time").classList.toggle("hurry", left <= 10);
+    $("#hunt-score").textContent = "👻 " + race.caught + (race.caught === 1 ? " cazado" : " cazados");
+    clearTimeout(race.timer);
+    if (left <= 0) return raceEnd();
+    race.timer = setTimeout(paintRace, 200);
+  }
+
+  function raceEnd() {
+    var n = race.caught;
+    race = null;
+    $("#race-btn").disabled = false;
+    $("#race-btn").textContent = "¡Otra vez!";
+    var best = n > 0 && (raceRecord === null || n > raceRecord);
+    if (best || raceRecord === null) {
+      raceRecord = Math.max(n, raceRecord || 0);
+      Lab.store.set("fantasmas.contrarreloj", raceRecord);
+      $("#race-record").textContent = raceRecord;
+    }
+    $("#race-text").textContent = "¡Tiempo! " + n + (n === 1 ? " fantasma" : " fantasmas") + " en un minuto." + (best ? " 🏆 ¡Récord nuevo!" : "");
+    if (best) Lab.confetti();
+    Lab.toast("⏱ ¡Tiempo! " + n + (n === 1 ? " cazado" : " cazados"));
+  }
 
   // ---------- Ajustes ----------
 

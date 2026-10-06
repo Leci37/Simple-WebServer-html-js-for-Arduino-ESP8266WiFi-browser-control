@@ -17,7 +17,13 @@ wifi de la placa, y en tabletas (los bloques se tocan o se arrastran con el dedo
   ejecuta puede brillar en la pantalla, como en Scratch.
 - **Por pasos, como se enseña:** secuencias (luces y esperas), bucles («repetir»,
   «por siempre»), sensores («esperar a que…») y condiciones («si…»). Cada invento
-  enseña sólo los bloques que le sirven, trae un ejemplo y cinco retos.
+  enseña sólo los bloques que le sirven, trae un ejemplo y sus retos.
+- **Eventos, en ¡Salta, Chispa!:** «⚡ cuando Chispa salte, choque, coja un
+  rayo…». Son bloques «sombrero» (`hat: true` en su definición): van siempre
+  sueltos arriba, guardan dentro sus bloques y cada uno espera su evento a la
+  vez que el resto del programa (`Promise.all`); «■ Parar» los para todos. Una
+  página sin sombreros funciona como antes. El juego añade sus bloques
+  (`when_game`, `wait_game`, `if_power`) desde `web/juego.js`.
 - **Detalles para niños:** cada «▶» empieza con las luces apagadas; los bloques
   que nunca se ejecutarán (debajo de un «por siempre») salen en gris; los bucles
   dicen por qué vuelta van; los números se pueden cambiar mientras el programa va.
@@ -38,7 +44,7 @@ color), sus partes (texto, desplegables, números) y qué hace al ejecutarse.
 
 Cualquier programa que sepa hacer una petición HTTP puede mandar en la placa:
 `/api/light?color=red&on=1`, `/api/state`… (la lista, en el
-[README](../README.md#la-api-para-mayores)). Contesta en JSON y lleva CORS
+[README](../README.md#la-api)). Contesta en JSON y lleva CORS
 (`Access-Control-Allow-Origin: *`), así que también se puede usar desde una web
 que no sea la de la placa.
 

@@ -15,6 +15,7 @@ en la 0.19.
 |---|---|
 | Los programas de bloques y los retos, en el navegador de cada tableta | En la cuenta: se siguen desde otra tableta o desde casa |
 | Cada placa, una isla | «Mis placas»: las de la clase, si están encendidas, su versión, sus sensores |
+| Los récords de la clase de ¡Salta, Chispa!, los cinco mejores, en la flash de cada placa | Los del colegio, de todas sus placas |
 | Programar es arrastrar bloques | Además, **«Programa con una frase»**: la IA propone los bloques y el niño los entiende y los cambia |
 | Sólo en español | Los idiomas de la plataforma (con euskera, catalán y gallego) |
 | Las fichas de montaje, en la pantalla | También en PDF para imprimir y repartir en clase |

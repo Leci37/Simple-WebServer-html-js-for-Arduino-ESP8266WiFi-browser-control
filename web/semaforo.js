@@ -39,7 +39,9 @@ document.addEventListener("DOMContentLoaded", function () {
       btn.classList.toggle("selected", Number(btn.getAttribute("data-speed")) === state.settings.trafficSpeed);
     });
     $("#speed-box").hidden = state.mode !== "auto";
-    if (!(editor && editor.running)) chat(state, go);
+    // Al acabar «Luz roja, luz verde», Chispa celebra hasta que el semáforo vuelve a ir solo.
+    var cheering = rl && rl.phase === "end" && Date.now() < rl.quietUntil;
+    if (!(editor && editor.running) && !rlBusy() && !cheering) chat(state, go);
     last = state;
   }
 
@@ -81,6 +83,138 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function problem(err) {
     Lab.toast("😕 " + err.message);
+  }
+
+  // ---------- v3 (idea 12): Luz roja, luz verde ----------
+  // En verde se avanza hacia la placa; en rojo, quieto. El sensor de distancia
+  // hace de árbitro: si en rojo la distancia cambia más de 6 cm, a la salida.
+
+  var GOAL_CM = 12;
+  var MOVE_CM = 6;
+  var BACK_TO_AUTO_MS = 2500; // al acabar, el semáforo vuelve a ir solo
+  var rl = null;
+  var rlRecord = Lab.store.get("semaforo.luzroja", null);
+  paintRlRecord();
+
+  function rlBusy() {
+    return !!rl && rl.phase !== "end";
+  }
+
+  function paintRlRecord() {
+    $("#rl-record").textContent = rlRecord === null ? "—" : String(rlRecord).replace(".", ",") + " s";
+  }
+
+  function rand(a, b) {
+    return a + Math.random() * (b - a);
+  }
+
+  function rlLight(color) {
+    Lab.api("light", { color: "all", on: 0 })
+      .then(function () {
+        return Lab.api("light", { color: color, on: 1 });
+      })
+      .catch(function () {});
+  }
+
+  function rlShow(cls, text) {
+    var box = $("#rl-state");
+    box.className = "rl-state" + (cls ? " " + cls : "");
+    box.textContent = text;
+  }
+
+  function rlPhase(phase, now) {
+    rl.phase = phase;
+    if (phase === "go") {
+      rl.until = now + rand(2000, 4500);
+      rlLight("green");
+      rlShow("go", "🟢 ¡Avanza!");
+      Lab.say("¡Verde! Avanza hacia la placa… 🚶", "happy");
+    } else if (phase === "wait") {
+      rl.until = now + 800;
+      rlLight("yellow");
+      rlShow("wait", "🟡 ¡Atento!");
+    } else if (phase === "stop") {
+      rl.until = now + rand(2000, 3500);
+      rl.grace = now + 450;
+      rl.ref = null;
+      rlLight("red");
+      Lab.api("beep", { hz: 330, ms: 200 }).catch(function () {});
+      rlShow("stop", "🔴 ¡Quieto!");
+      Lab.say("¡Rojo! Ni un pelo… 👀", "wow");
+    } else if (phase === "back") {
+      rlLight("red");
+      Lab.api("beep", { hz: 196, ms: 400 }).catch(function () {});
+      rlShow("back", "👀 ¡Te he visto! Vuelve a la salida (" + rl.startCm + " cm)");
+      Lab.say("¡Te he visto moverte! A la salida…", "scared");
+    }
+  }
+
+  $("#rl-btn").addEventListener("click", function () {
+    if (rlBusy()) return rlEnd(null);
+    var cm = Lab.state ? Lab.state.ghost.cm : -1;
+    if (cm < 0) return Lab.toast("📏 No te veo: ponte delante del sensor de distancia");
+    if (cm <= 40) return Lab.toast("📏 Aléjate un poco: a más de 40 cm de la placa");
+    rl = { startCm: cm, t0: Date.now(), caught: 0, phase: "" };
+    this.textContent = "■ Parar";
+    Lab.poll(150);
+    rlPhase("go", Date.now());
+    rlWalker(cm);
+  });
+
+  function rlWalker(cm) {
+    $("#rl-cm").textContent = cm >= 0 ? "📏 " + cm + " cm" : "📏 —";
+    if (!rl) return;
+    var k = Math.max(0, Math.min(1, (rl.startCm - cm) / (rl.startCm - GOAL_CM)));
+    $("#rl-walker").style.left = 6 + k * 84 + "%";
+  }
+
+  Lab.onState(function (state) {
+    var cm = state.ghost.cm;
+    rlWalker(cm);
+    if (!rlBusy() || cm < 0) return;
+    var now = Date.now();
+    if (rl.phase === "back") {
+      if (cm >= rl.startCm - 10) rlPhase("go", now);
+      return;
+    }
+    if (rl.phase === "stop") {
+      // Un respiro para pararse; después, cualquier cambio cuenta.
+      if (now < rl.grace || rl.ref === null) rl.ref = cm;
+      else if (Math.abs(cm - rl.ref) > MOVE_CM) {
+        rl.caught += 1;
+        return rlPhase("back", now);
+      }
+    }
+    if (cm <= GOAL_CM) return rlEnd((now - rl.t0) / 1000);
+    if (now >= rl.until) rlPhase(rl.phase === "go" ? "wait" : rl.phase === "wait" ? "stop" : "go", now);
+  });
+
+  function rlEnd(secs) {
+    var was = rl;
+    rl.phase = "end";
+    rl.quietUntil = Date.now() + BACK_TO_AUTO_MS;
+    $("#rl-btn").textContent = "¡Otra vez!";
+    Lab.poll(350);
+    if (secs === null) {
+      rlShow("", "Parado. Cuando quieras, ¡otra vez!");
+    } else {
+      var s = Math.round(secs * 10) / 10;
+      var best = rlRecord === null || s < rlRecord;
+      if (best) {
+        rlRecord = s;
+        Lab.store.set("semaforo.luzroja", s);
+        paintRlRecord();
+      }
+      var times = was.caught ? " · te pilló " + was.caught + (was.caught === 1 ? " vez" : " veces") : "";
+      rlShow("end", "🏁 ¡Has llegado en " + String(s).replace(".", ",") + " s!" + (best ? " 🏆 Récord" : "") + times);
+      rlLight("green");
+      Lab.confetti();
+      Lab.say("¡Has llegado a la placa! 🏁", "wow");
+    }
+    // Al acabar, el semáforo vuelve a ir solo.
+    setTimeout(function () {
+      if (rl === was) Lab.api("mode", { set: "auto" }).catch(function () {});
+    }, BACK_TO_AUTO_MS);
   }
 
   var editor = Bloques.mount($("#editor"), {

@@ -210,7 +210,7 @@ document.addEventListener("DOMContentLoaded", function () {
   $("#clap-record").textContent = record === null ? "—" : record;
 
   $("#silence-btn").addEventListener("click", function () {
-    if (silence) return;
+    if (silence || (duel && duel.phase !== "end")) return;
     var btn = this;
     btn.disabled = true;
     silence = { phase: "count", count: 3 };
@@ -239,7 +239,7 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   $("#clap-btn").addEventListener("click", function () {
-    if (clap) return;
+    if (clap || (duel && duel.phase !== "end")) return;
     this.disabled = true;
     clap = { start: Date.now(), best: 0 };
     $("#clap-text").textContent = "¡Ahora! ¡Una palmada fuerte! 👏";
@@ -247,6 +247,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function games(state) {
     var level = state.sound.level;
+    duelHear(level);
     if (silence && silence.phase === "run") {
       var elapsed = Date.now() - silence.start;
       $("#silence-bar").style.width = Math.min(100, elapsed / 100) + "%";
@@ -269,6 +270,167 @@ document.addEventListener("DOMContentLoaded", function () {
         }
       }
     }
+  }
+
+  // ---------- v3 (idea 10): Duelo de palmadas ----------
+  // Dos equipos se turnan: en cada turno, 2,5 segundos para la palmada más
+  // fuerte. Tres rondas, y gana quien se lleve dos. La luz de la placa dice
+  // quién va ganando: roja, verde o amarilla si van empatados.
+
+  var duel = null;
+  var TEAM = { red: "rojo", green: "verde" };
+
+  function duelSay(html) {
+    $("#duel-status").innerHTML = html;
+  }
+
+  function leader() {
+    var p = duel.points;
+    return p.red > p.green ? "red" : p.green > p.red ? "green" : "yellow";
+  }
+
+  function duelLight(color) {
+    return Lab.api("light", { color: "all", on: 0 })
+      .then(function () {
+        return Lab.api("light", { color: color, on: 1 });
+      })
+      .catch(function () {});
+  }
+
+  function paintDuel() {
+    ["red", "green"].forEach(function (team, i) {
+      var tile = $("#team-" + team);
+      tile.classList.toggle("turn", !!duel && duel.phase !== "end" && duel.turn === i);
+      tile.classList.toggle("lead", !!duel && leader() === team);
+      $("#" + team + "-points").textContent = duel ? duel.points[team] : 0;
+      var claps = duel ? duel.claps[team] : [];
+      $("#" + team + "-last").textContent = claps.length ? "Palmadas: " + claps.join(" · ") : "Todavía sin palmadas";
+    });
+  }
+
+  $("#duel-btn").addEventListener("click", function () {
+    if (duel && duel.phase !== "end") return;
+    if (silence || clap) return Lab.toast("Espera a que acabe el otro juego 😉");
+    duel = { round: 1, turn: 0, phase: "wait", points: { red: 0, green: 0 }, claps: { red: [], green: [] }, best: 0 };
+    this.disabled = true;
+    Lab.poll(100);
+    duelLight("yellow");
+    duelTurn();
+  });
+
+  function duelTurn() {
+    var team = duel.turn ? "green" : "red";
+    var count = 3;
+    duel.phase = "count";
+    paintDuel();
+    (function tick() {
+      if (!duel || duel.phase !== "count") return;
+      if (count > 0) {
+        duelSay("Ronda " + duel.round + " de 3 · Equipo " + TEAM[team] + ", preparados… <b>" + count + "</b>");
+        count -= 1;
+        return setTimeout(tick, 700);
+      }
+      duel.phase = "go";
+      duel.best = 0;
+      duel.goAt = Date.now();
+      duelSay("¡Equipo " + TEAM[team] + ", <b>AHORA</b>! 👏");
+      $("#" + team + "-last").textContent = "¡Ahora!";
+      setTimeout(duelEndTurn, 2500);
+    })();
+  }
+
+  // Lo que se oye durante el turno: cuenta la palmada más fuerte.
+  function duelHear(level) {
+    if (!duel || duel.phase !== "go") return;
+    duel.best = Math.max(duel.best, level);
+    $("#" + (duel.turn ? "green" : "red") + "-last").textContent = "¡Ahora! " + duel.best;
+    $("#duel-bar").style.width = Math.min(100, (Date.now() - duel.goAt) / 25) + "%";
+  }
+
+  function duelEndTurn() {
+    if (!duel) return;
+    var team = duel.turn ? "green" : "red";
+    duel.claps[team].push(duel.best);
+    duel.phase = "wait";
+    $("#duel-bar").style.width = "0%";
+    if (duel.turn === 0) {
+      duel.turn = 1;
+      paintDuel();
+      duelSay("🔴 El rojo ha hecho <b>" + duel.best + "</b>. Ahora, el verde…");
+      return setTimeout(duelTurn, 1400);
+    }
+    var r = duel.claps.red[duel.round - 1];
+    var v = duel.claps.green[duel.round - 1];
+    var text;
+    if (r > v) {
+      duel.points.red += 1;
+      text = "Ronda " + duel.round + " para el <b>rojo</b>, " + r + " a " + v;
+    } else if (v > r) {
+      duel.points.green += 1;
+      text = "Ronda " + duel.round + " para el <b>verde</b>, " + v + " a " + r;
+    } else {
+      text = "Ronda " + duel.round + ": ¡empate a " + r + "!";
+    }
+    paintDuel();
+    duelLight(leader());
+    var p = duel.points;
+    if (p.red === 2 || p.green === 2 || duel.round === 3) {
+      duelSay(text + ".");
+      return setTimeout(duelEnd, 1500);
+    }
+    duel.round += 1;
+    duel.turn = 0;
+    duelSay(text + ". Siguiente ronda…");
+    setTimeout(duelTurn, 1900);
+  }
+
+  function duelEnd() {
+    var p = duel.points;
+    var champ = leader();
+    var end = duel;
+    duel.phase = "end";
+    paintDuel();
+    $("#duel-btn").disabled = false;
+    $("#duel-btn").textContent = "¡La revancha!";
+    Lab.poll(250);
+    var chain = Promise.resolve();
+    if (champ !== "yellow") {
+      duelSay("🏆 ¡Gana el equipo <b>" + TEAM[champ] + "</b>, " + Math.max(p.red, p.green) + " a " + Math.min(p.red, p.green) + "!");
+      Lab.confetti();
+      Lab.toast("¡Gana el equipo " + TEAM[champ] + "! 🏆");
+      // La luz del equipo que gana parpadea… salvo que ya haya empezado la
+      // revancha: entonces la luz es suya, y el parpadeo se corta.
+      var blink = function (on) {
+        if (duel !== end) throw new Error("revancha");
+        return Lab.api("light", { color: champ, on: on });
+      };
+      for (var i = 0; i < 4; i++) {
+        chain = chain
+          .then(function () {
+            return blink(0);
+          })
+          .then(function () {
+            return Lab.sleep(220);
+          })
+          .then(function () {
+            return blink(1);
+          })
+          .then(function () {
+            return Lab.sleep(220);
+          });
+      }
+    } else {
+      duelSay("🤝 ¡Empate, " + p.red + " a " + p.green + "! ¿La revancha?");
+    }
+    chain
+      .catch(function () {})
+      .then(function () {
+        return Lab.sleep(1600);
+      })
+      .then(function () {
+        // Al acabar, las luces vuelven a enseñar el ruido.
+        if (duel === end) Lab.api("mode", { set: "sound" }).catch(function () {});
+      });
   }
 
   // ---------- Programar ----------

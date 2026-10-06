@@ -89,10 +89,22 @@
                 <ellipse cx="102" cy="82" rx="8" ry="5" fill="#ff9bd2" opacity=".8" />
               </svg>
               <span class="boo" id="boo">¡BUUU!</span>
+              <div class="hunt-clock" id="hunt-clock" hidden>
+                <span class="hunt-time" id="hunt-time">⏱ 1:00</span>
+                <span class="hunt-score" id="hunt-score">👻 0 cazados</span>
+              </div>
             </div>
             <div class="hunt">
               <p class="hunt-count">📸 Fantasmas cazados: <b id="caught">0</b></p>
               <button class="btn btn-soft" type="button" id="reset-caught">Empezar de cero</button>
+            </div>
+            <!-- v3 (idea 11): caza contrarreloj -->
+            <div class="game hunt-race">
+              <div>
+                <h3>⏱ Caza contrarreloj</h3>
+                <p class="muted"><span id="race-text">Un minuto para cazar todos los fantasmas que puedas.</span> Récord: <b id="race-record">—</b></p>
+              </div>
+              <button class="btn" type="button" id="race-btn">¡Un minuto!</button>
             </div>
             <div class="hunt-lights">
               <div class="traffic small" id="traffic" aria-label="Las luces de la placa">
@@ -145,6 +157,7 @@
             <li><button class="challenge" type="button" data-id="3"><span class="stars">⭐⭐</span><span>Mide cosas: ¿a cuántos centímetros está la pared? ¿Y el techo?</span><span class="check"></span></button></li>
             <li><button class="challenge" type="button" data-id="4"><span class="stars">⭐⭐</span><span>Programa una trampa: cuando algo esté a menos de 30 cm, enciende el rojo y toca una nota.</span><span class="check"></span></button></li>
             <li><button class="challenge" type="button" data-id="5"><span class="stars">⭐⭐⭐</span><span>Detector musical: con bloques «si», que toque una nota distinta según lo cerca que esté.</span><span class="check"></span></button></li>
+            <li><button class="challenge" type="button" data-id="6"><span class="stars">⭐⭐</span><span>Caza contrarreloj: ¿llegas a 5 fantasmas en un minuto?</span><span class="check"></span></button></li>
           </ul>
         </div>
       </section>
@@ -199,7 +212,7 @@
     </main>
 
     <footer class="footer wrap">
-      Laboratorio de inventos · versión <span data-version>1.1.0</span> · placa <span data-board-name>…</span>
+      Laboratorio de inventos · versión <span data-version>1.2.0</span> · placa <span data-board-name>…</span>
     </footer>
   </body>
 </html>

@@ -96,6 +96,19 @@
             </div>
           </div>
 
+          <!-- v3 (idea 10): duelo de palmadas -->
+          <div class="card duel">
+            <h2>⚔️ Duelo de palmadas</h2>
+            <p class="muted">Dos equipos se turnan para dar la palmada más fuerte. Tres rondas: gana quien se lleve dos. La luz de la placa dice quién va ganando (amarilla si vais empatados).</p>
+            <div class="duel-teams">
+              <div class="duel-team red" id="team-red"><span class="dt-name">🔴 Equipo rojo</span><span class="dt-score" id="red-points">0</span><span class="dt-last" id="red-last">Todavía sin palmadas</span></div>
+              <div class="duel-team green" id="team-green"><span class="dt-name">🟢 Equipo verde</span><span class="dt-score" id="green-points">0</span><span class="dt-last" id="green-last">Todavía sin palmadas</span></div>
+            </div>
+            <p class="duel-status" id="duel-status" aria-live="polite">Empieza el rojo. Cuando ponga «AHORA», ¡palmada!</p>
+            <div class="progress"><span id="duel-bar"></span></div>
+            <button class="btn" type="button" id="duel-btn">¡Empezar el duelo!</button>
+          </div>
+
           <div class="card">
             <h2>Ajustes</h2>
             <div class="field">
@@ -141,6 +154,7 @@
             <li><button class="challenge" type="button" data-id="3"><span class="stars">⭐⭐</span><span>Programa una alarma: cuando el ruido pase de 70, que se encienda el rojo y pite.</span><span class="check"></span></button></li>
             <li><button class="challenge" type="button" data-id="4"><span class="stars">⭐⭐</span><span>Ajusta los colores para que, hablando bajito, la clase se quede en verde.</span><span class="check"></span></button></li>
             <li><button class="challenge" type="button" data-id="5"><span class="stars">⭐⭐⭐</span><span>Haz tu propio sonómetro con bloques «si»: verde, amarillo o rojo según el ruido.</span><span class="check"></span></button></li>
+            <li><button class="challenge" type="button" data-id="6"><span class="stars">⭐⭐</span><span>Duelo de palmadas: ganad al otro equipo a tres rondas.</span><span class="check"></span></button></li>
           </ul>
         </div>
       </section>
@@ -190,7 +204,7 @@
     </main>
 
     <footer class="footer wrap">
-      Laboratorio de inventos · versión <span data-version>1.1.0</span> · placa <span data-board-name>…</span>
+      Laboratorio de inventos · versión <span data-version>1.2.0</span> · placa <span data-board-name>…</span>
     </footer>
   </body>
 </html>

@@ -17,8 +17,9 @@ tipo Scratch. Lee el [README](README.md); para crecer,
 3. **`laboratorio/web_pages.h` no se toca a mano.** Se edita `web/` y se ejecuta
    `python tools/build_web.py`; la cabecera generada se sube.
 4. **El simulador es el firmware en Python.** Lo que cambie en la lógica o en la
-   API (`lights.h`, `sound.h`, `ghost.h`, `web_api.h`) cambia en
-   `tools/simulador.py` en el mismo commit; las pruebas comparan los dos.
+   API (`lights.h`, `sound.h`, `ghost.h`, `records.h`, `alias.h`, `web_api.h`)
+   cambia en `tools/simulador.py` en el mismo commit; las pruebas comparan los
+   dos.
 5. **Cada cambio, con su prueba**, `pytest` en verde (sin saltadas: las de las
    páginas necesitan Playwright y Chromium) y el firmware compilando:
    `arduino-cli compile --fqbn esp8266:esp8266:nodemcuv2 laboratorio`.

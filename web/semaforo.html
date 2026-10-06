@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Semáforo · Laboratorio de inventos</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/app.css" />
+    <script src="/app.js" defer></script>
+    <script src="/bloques.js" defer></script>
+    <script src="/esquema.js" defer></script>
+    <script src="/semaforo.js" defer></script>
+  </head>
+  <body class="theme-traffic">
+    <header class="topbar">
+      <div class="wrap">
+        <a class="back" href="/" aria-label="Volver a los inventos">←</a>
+        <h1>🚦 Semáforo</h1>
+        <span class="conn" data-conn>Conectando…</span>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <p class="offline-banner">
+        No encuentro la placa. ¿Está enchufada? ¿Sigues conectado a su wifi
+        (<b data-board-name>Laboratorio-…</b>)?
+      </p>
+
+      <nav class="tabs" role="tablist" aria-label="¿Qué quieres hacer?">
+        <button class="tab" role="tab" data-tab="jugar" aria-controls="panel-jugar"><span class="ico">🎮</span>Jugar</button>
+        <button class="tab" role="tab" data-tab="programar" aria-controls="panel-programar"><span class="ico">🧩</span>Programar</button>
+        <button class="tab" role="tab" data-tab="montar" aria-controls="panel-montar"><span class="ico">🔌</span>Montar</button>
+      </nav>
+
+      <!-- 🎮 Jugar -->
+      <section id="panel-jugar" class="panel" role="tabpanel" aria-label="Jugar">
+        <div class="helper">
+          <div class="chispa" data-mood="happy"></div>
+          <div class="bubble"><p data-say>Toca una luz para encenderla. ¡La de verdad también se enciende!</p></div>
+        </div>
+
+        <div class="play-grid">
+          <!-- v3 (idea 12): luz roja, luz verde -->
+          <div class="card rl">
+            <div class="rl-head">
+              <div>
+                <h2>🟢🔴 Luz roja, luz verde</h2>
+                <p class="muted">En verde, avanza hacia la placa. En rojo, ¡quieto! Si el sensor te ve moverte, vuelves a la salida.</p>
+              </div>
+              <button class="btn" type="button" id="rl-btn">¡Empezar!</button>
+            </div>
+            <div class="rl-state" id="rl-state">Ponte delante del sensor, a más de 40 cm de la placa, y pulsa «¡Empezar!»</div>
+            <div class="rl-track" aria-hidden="true">
+              <span class="rl-walker" id="rl-walker">🚶</span>
+              <span class="rl-goal">🏁</span>
+            </div>
+            <div class="rl-labels"><span>Salida</span><span id="rl-cm">📏 —</span><span>La placa</span></div>
+            <p class="muted small-note">Usa el sensor de distancia del <a href="/fantasmas#montar">detector de fantasmas</a>. Récord: <b id="rl-record">—</b></p>
+          </div>
+
+          <div class="card stage">
+            <div class="crossing">
+              <div class="pole">
+                <div class="traffic" id="traffic">
+                  <button class="lamp red" data-color="red" aria-label="Luz roja" aria-pressed="false"></button>
+                  <button class="lamp yellow" data-color="yellow" aria-label="Luz amarilla" aria-pressed="false"></button>
+                  <button class="lamp green" data-color="green" aria-label="Luz verde" aria-pressed="false"></button>
+                </div>
+              </div>
+              <div class="walker">
+                <div class="walk-light" id="walk-light" aria-label="Semáforo de peatones">
+                  <span class="walk-lamp walk-stop">
+                    <svg viewBox="0 0 40 60" aria-hidden="true">
+                      <circle cx="20" cy="8" r="6.5" />
+                      <path d="M12 17h16a3 3 0 0 1 3 3v18h-4v19h-5V41h-4v16h-5V38H9V20a3 3 0 0 1 3-3z" />
+                    </svg>
+                  </span>
+                  <span class="walk-lamp walk-go">
+                    <svg viewBox="0 0 40 60" aria-hidden="true">
+                      <circle cx="22" cy="8" r="6.5" />
+                      <path d="M19 16h7l3 13 7 4-2 4-9-5-1 9 7 18-5 2-7-16-6 16-5-2 6-20 1-10-4 4v8h-5V28z" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+            </div>
+            <button class="btn push" id="walk-btn" type="button"><span class="ico">🔘</span>Quiero cruzar</button>
+          </div>
+
+          <div class="card controls">
+            <h2>¿Quién manda?</h2>
+            <div class="choice" role="group" aria-label="Modo del semáforo">
+              <button class="btn btn-soft" type="button" data-mode="manual"><span class="ico">🖐️</span>Yo</button>
+              <button class="btn btn-soft" type="button" data-mode="auto"><span class="ico">🔄</span>Automático</button>
+              <button class="btn btn-soft" type="button" data-mode="night"><span class="ico">🌙</span>Noche</button>
+            </div>
+
+            <div id="speed-box">
+              <h3>Velocidad del automático</h3>
+              <div class="choice" role="group" aria-label="Velocidad">
+                <button class="btn btn-soft" type="button" data-speed="1"><span class="ico">🐢</span>Tortuga</button>
+                <button class="btn btn-soft" type="button" data-speed="2"><span class="ico">🚶</span>Normal</button>
+                <button class="btn btn-soft" type="button" data-speed="3"><span class="ico">🐇</span>Liebre</button>
+              </div>
+            </div>
+
+            <div class="tip">
+              <p>¿Sabías que el botón <b>FLASH</b> de la placa también es el de los peatones? ¡Púlsalo en automático!</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 🧩 Programar -->
+      <section id="panel-programar" class="panel" role="tabpanel" aria-label="Programar" hidden>
+        <div class="helper">
+          <div class="chispa" data-mood="happy"></div>
+          <div class="bubble">
+            <p>
+              Pon bloques en orden para hacer tu <b>secuencia</b> de luces y pulsa <b>▶ ¡Ejecutar!</b> El
+              semáforo de verdad hará lo mismo, paso a paso.
+            </p>
+          </div>
+        </div>
+
+        <div id="editor"></div>
+
+        <div class="card retos">
+          <h2>🏆 Retos <span class="challenge-count" data-challenge-count="semaforo"></span></h2>
+          <ul class="challenges" data-key="semaforo">
+            <li><button class="challenge" type="button" data-id="1"><span class="stars">⭐</span><span>Enciende las tres luces a la vez… y apágalas.</span><span class="check"></span></button></li>
+            <li><button class="challenge" type="button" data-id="2"><span class="stars">⭐</span><span>Programa la secuencia del semáforo: verde, amarillo y rojo, cada una con su «esperar».</span><span class="check"></span></button></li>
+            <li><button class="challenge" type="button" data-id="3"><span class="stars">⭐⭐</span><span>Haz que la secuencia se repita 5 veces sin copiar bloques: usa «repetir».</span><span class="check"></span></button></li>
+            <li><button class="challenge" type="button" data-id="4"><span class="stars">⭐⭐</span><span>Semáforo estropeado: que el amarillo parpadee por siempre.</span><span class="check"></span></button></li>
+            <li><button class="challenge" type="button" data-id="5"><span class="stars">⭐⭐⭐</span><span>Semáforo de peatones: espera a que pulsen el botón, pon el rojo y pita mientras cruzan.</span><span class="check"></span></button></li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 🔌 Montar -->
+      <section id="panel-montar" class="panel" role="tabpanel" aria-label="Montar" hidden>
+        <div class="card">
+          <h2>Lo que necesitas</h2>
+          <ul class="parts">
+            <li><span class="n">1</span>Placa NodeMCU (ESP8266) y su cable USB</li>
+            <li><span class="n">3</span>LEDs: rojo, amarillo y verde</li>
+            <li><span class="n">3</span>Resistencias de 220 Ω (rojo, rojo, marrón)</li>
+            <li><span class="n">1</span>Protoboard y unos cables</li>
+            <li><span class="n">1</span>Zumbador pasivo, si quieres sonido (opcional)</li>
+            <li><span class="n">1</span>Para «Luz roja, luz verde»: el sensor de distancia del detector de fantasmas</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2>Cómo se conecta</h2>
+          <div class="wiring" id="wiring"></div>
+          <table class="pins">
+            <thead>
+              <tr><th>Pieza</th><th>Qué pata</th><th>Pin</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>🔴 LED rojo</td><td>pata larga (+), con su resistencia</td><td><span class="pin">D5</span></td></tr>
+              <tr><td>🟡 LED amarillo</td><td>pata larga (+), con su resistencia</td><td><span class="pin">D6</span></td></tr>
+              <tr><td>🟢 LED verde</td><td>pata larga (+), con su resistencia</td><td><span class="pin">D7</span></td></tr>
+              <tr><td>Los tres LEDs</td><td>patas cortas (−)</td><td><span class="pin">GND</span></td></tr>
+              <tr><td>🔊 Zumbador</td><td>+ y −</td><td><span class="pin">D8</span> <span class="pin">GND</span></td></tr>
+              <tr><td>🔘 Botón de peatones</td><td>ya está en la placa: es el botón FLASH</td><td><span class="pin">D3</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="card">
+          <h2>Paso a paso</h2>
+          <ol class="steps">
+            <li><b>Con la placa desenchufada</b>, pínchala en la protoboard, con una fila de pines a cada lado de la ranura del medio.</li>
+            <li>Mira los LEDs: cada uno tiene una <b>pata larga (+)</b> y una <b>pata corta (−)</b>.</li>
+            <li>Del pin <b>D5</b> sale un cable a una resistencia, y de la resistencia a la pata larga del LED <b>rojo</b>. Lo mismo con <b>D6</b> y el <b>amarillo</b>, y con <b>D7</b> y el <b>verde</b>.</li>
+            <li>Las patas cortas de los tres LEDs van a la fila azul (−) de la protoboard, y esa fila, con un cable, a un pin <b>GND</b> de la placa.</li>
+            <li>Si tienes zumbador: su pata <b>+</b> a <b>D8</b> y la otra a GND.</li>
+            <li>Enchufa el USB. Las tres luces se encienden una a una con su nota (do, mi, sol): ¡así sabes que están bien! Si una no se enciende, dale la vuelta a ese LED.</li>
+          </ol>
+          <div class="tip">
+            <p>¿Para qué la resistencia? Sin ella pasaría demasiada corriente y el LED se fundiría. Es como un grifo medio cerrado.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer wrap">
+      Laboratorio de inventos · versión <span data-version>1.2.0</span> · placa <span data-board-name>…</span>
+    </footer>
+  </body>
+</html>

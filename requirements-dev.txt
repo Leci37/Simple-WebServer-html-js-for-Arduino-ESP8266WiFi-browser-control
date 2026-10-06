@@ -1,0 +1,6 @@
+# Para las pruebas (pytest) y el navegador de las pruebas de las páginas.
+# Después: python -m playwright install chromium
+pytest>=7
+playwright>=1.40
+# Para tools/capturas.py (las capturas del README).
+pillow>=9

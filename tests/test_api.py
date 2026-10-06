@@ -38,9 +38,13 @@ def test_the_web_only_calls_orders_the_firmware_has():
     assert {"/api/" + name for name in used} <= firmware_routes()
 
 
+# Lo mínimo que piden las órdenes que no van solas.
+EXAMPLE_ARGS = {"/api/mode": "?set=auto", "/api/light": "?color=red", "/api/record": "?alias=Rayo&m=10"}
+
+
 def test_the_simulator_answers_every_firmware_order(sim):
     for route in firmware_routes():
-        code, _ = sim.get(route + ("?set=auto" if route == "/api/mode" else "?color=red" if route == "/api/light" else ""))
+        code, _ = sim.get(route + EXAMPLE_ARGS.get(route, ""))
         assert code == 200, route
 
 
@@ -49,7 +53,8 @@ def test_the_state_has_the_same_shape_in_firmware_and_simulator(sim):
 
 
 def test_settings_have_the_same_names_everywhere(sim):
-    in_firmware = set(re.findall(r'arg(?:Int|Bool)\("(\w+)"', API_H[API_H.index("void handleSettings()") :]))
+    start = API_H.index("void handleSettings()")
+    in_firmware = set(re.findall(r'arg(?:Int|Bool)\("(\w+)"', API_H[start : API_H.index("\n}\n", start)]))
     in_simulator = set(sim.api("/api/state")["settings"])
     assert in_firmware == in_simulator
     sent_by_web = set(re.findall(r"(sound\w+|ghost\w+|trafficSpeed):", WEB_JS))

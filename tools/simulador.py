@@ -31,9 +31,24 @@ from build_web import TYPES, WEB, url_for, web_files  # noqa: E402
 MODES = ["manual", "auto", "night", "sound", "ghost"]
 VERSION = "1.1.0"
 
+# Los récords de la clase (laboratorio/records.h y alias.h).
+RECORDS_MAX = 5
+RECORD_METERS_MAX = 999999
+WORLD_NAMES = ["campo", "granja", "luna"]
+ALIAS_CHARS = 12
+ALIAS_DROPS = '<>"&'
+
 
 def now_ms() -> int:
     return int(time.monotonic() * 1000)
+
+
+def clean_alias(raw: str) -> str:
+    """Como cleanAlias() de alias.h: sin <>"&, sin caracteres de control, sin
+    espacios a los lados y con 12 letras como mucho. Lo que no era UTF-8 llega
+    aquí como U+FFFD, y la placa lo tira: aquí también."""
+    kept = "".join(c for c in raw if c not in ALIAS_DROPS and c != "\ufffd" and ord(c) >= 0x20 and ord(c) != 0x7F)
+    return kept.strip(" ")[:ALIAS_CHARS]
 
 
 class Board:
@@ -70,6 +85,8 @@ class Board:
             "ghostSound": True,
             "trafficSpeed": 2,
         }
+        # La placa los guarda en la flash; aquí duran lo que dura el simulador.
+        self.records: list[dict] = []
 
     # --- Las luces (lights.h) ---------------------------------------------------
 
@@ -230,6 +247,12 @@ class Board:
                 return 200, self.state()
             if path == "/api/settings":
                 return self.change_settings(args)
+            if path == "/api/records":
+                if arg_bool(args, "clear", False):
+                    self.records = []
+                return 200, {"records": [dict(r) for r in self.records]}
+            if path == "/api/record":
+                return self.add_record(args)
             if path == "/api":
                 return 200, {"api": ["GET /api/state", "…"]}
             return 404, {"error": "esa orden no existe: mira /api"}
@@ -254,6 +277,24 @@ class Board:
             return 400, {"error": "ghostNear tiene que ser menor que ghostFar"}
         self.settings = s
         return 200, self.state()
+
+    def add_record(self, args: dict[str, str]) -> tuple[int, dict]:
+        """Como handleRecord() y recordsAdd(): con los mismos metros que otro, va detrás."""
+        alias, meters = clean_alias(args.get("alias", "")), arg_int(args, "m", 0)
+        if not alias or meters <= 0:
+            return 400, {"error": "hace falta un alias y los metros"}
+        world = args.get("w", WORLD_NAMES[0])
+        if world not in WORLD_NAMES:
+            return 400, {"error": "w tiene que ser campo, granja o luna"}
+        record = {"alias": alias, "m": min(meters, RECORD_METERS_MAX), "t": 1 if arg_bool(args, "t", False) else 0, "w": world}
+        at = 0
+        while at < len(self.records) and self.records[at]["m"] >= record["m"]:
+            at += 1
+        place = 0
+        if at < RECORDS_MAX:
+            self.records = (self.records[:at] + [record] + self.records[at:])[:RECORDS_MAX]
+            place = at + 1
+        return 200, {"records": [dict(r) for r in self.records], "place": place}
 
     def simulate(self, args: dict[str, str]) -> dict:
         """/sim?sound=80&cm=15&clap=1&auto=1: mover los sensores a mano."""

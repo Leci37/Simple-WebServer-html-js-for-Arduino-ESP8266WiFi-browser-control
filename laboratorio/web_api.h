@@ -16,6 +16,7 @@
 #include "ghost.h"
 #include "lights.h"
 #include "network.h"
+#include "records.h"
 #include "web_pages.h"
 
 ESP8266WebServer server(80);
@@ -172,6 +173,56 @@ void handleSettings() {
   handleState();
 }
 
+// --- Los récords de la clase (records.h) --------------------------------------
+
+String recordsJson() {
+  String json = "\"records\":[";
+  for (uint8_t i = 0; i < records.count; i++) {
+    const Record& record = records.list[i];
+    if (i) json += ',';
+    json += "{\"alias\":\"" + jsonEscape(record.alias) + "\",\"m\":" + String(record.meters) +
+            ",\"t\":" + String(record.turtle) + ",\"w\":\"" + WORLD_NAMES[record.world] + "\"}";
+  }
+  json += ']';
+  return json;
+}
+
+// /api/records: los cinco mejores, de más metros a menos. Con clear=1, los borra.
+void handleRecords() {
+  if (argBool("clear", false)) recordsClear();
+  String json = "{";
+  json += recordsJson();
+  json += '}';
+  sendJson(200, json);
+}
+
+// /api/record?alias=Rayo&m=906&t=0&w=campo: un récord nuevo (t=1, en modo
+// tortuga; w, el mundo). Contesta con la lista y el puesto (0 si no entra).
+void handleRecord() {
+  char alias[ALIAS_SIZE];
+  String raw = server.arg("alias");
+  cleanAlias(raw.c_str(), raw.length(), alias, sizeof(alias));
+  long meters = argInt("m", 0);
+  if (alias[0] == '\0' || meters <= 0) {
+    sendError(400, "hace falta un alias y los metros");
+    return;
+  }
+  int world = 0;
+  if (server.hasArg("w")) {
+    world = worldFromName(server.arg("w"));
+    if (world < 0) {
+      sendError(400, "w tiene que ser campo, granja o luna");
+      return;
+    }
+  }
+  uint32_t capped = meters > (long)RECORD_METERS_MAX ? RECORD_METERS_MAX : (uint32_t)meters;
+  uint8_t place = recordsAdd(alias, capped, argBool("t", false), (uint8_t)world);
+  String json = "{";
+  json += recordsJson();
+  json += ",\"place\":" + String(place) + "}";
+  sendJson(200, json);
+}
+
 // /api: la chuleta de la API, para quien quiera programar la placa desde fuera.
 void handleApiHelp() {
   sendJson(200,
@@ -183,7 +234,9 @@ void handleApiHelp() {
            "\"GET /api/beep?hz=880&ms=200\","
            "\"GET /api/walk\","
            "\"GET /api/settings?soundYellow=45&soundRed=70&soundGain=100&soundAlarm=0"
-           "&ghostNear=20&ghostFar=60&ghostSound=1&trafficSpeed=2\""
+           "&ghostNear=20&ghostFar=60&ghostSound=1&trafficSpeed=2\","
+           "\"GET /api/records (clear=1 los borra)\","
+           "\"GET /api/record?alias=Rayo&m=906&t=0&w=campo|granja|luna\""
            "]}");
 }
 
@@ -252,6 +305,8 @@ void webBegin() {
   server.on("/api/beep", HTTP_GET, handleBeep);
   server.on("/api/walk", HTTP_GET, handleWalk);
   server.on("/api/settings", HTTP_GET, handleSettings);
+  server.on("/api/records", HTTP_GET, handleRecords);
+  server.on("/api/record", HTTP_GET, handleRecord);
   server.onNotFound(handleNotFound);
   server.begin();
 }

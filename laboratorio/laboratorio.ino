@@ -17,6 +17,8 @@
 //   ghost.h      👻 el sensor de distancia
 //   buzzer.h     🔊 el zumbador
 //   network.h    📶 la wifi
+//   records.h    🏆 los récords de la clase de ¡Salta, Chispa!, en la flash
+//   alias.h      ✏️ cómo se limpia el alias de un récord
 //   web_api.h    🌐 la web y sus órdenes
 //   web_pages.h  📄 las páginas (no se toca: sale de la carpeta web/)
 
@@ -27,6 +29,7 @@
 #include "ghost.h"
 #include "lights.h"
 #include "network.h"
+#include "records.h"
 #include "web_api.h"
 
 // Al arrancar, cada luz se enciende con su nota: si alguna no se enciende,
@@ -52,6 +55,7 @@ void setup() {
   soundBegin();
   ghostBegin();
   helloLights();
+  recordsBegin();
   networkBegin();
   webBegin();
   lightsStart();

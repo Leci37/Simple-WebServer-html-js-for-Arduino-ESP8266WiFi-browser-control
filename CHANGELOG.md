@@ -25,6 +25,10 @@ cuatro cambios pequeños, sin nada nuevo en la placa ni en su API.
 - La web en la placa pasa de 87 328 a 87 523 bytes comprimidos; el firmware,
   igual (37 % de la flash, 39 % de la RAM). Una prueba para cada cambio, que
   falla con la 1.2.0; capturas al día.
+- **README:** todos los juegos en una tabla, cada uno con su captura (nuevas:
+  el silencio y el récord de palmada, la victoria y el final a dos); en qué
+  placas ESP8266 va (compilado para cinco) y cuántos aparatos admite su wifi
+  (8: en clase, una placa por grupo).
 
 ## 1.2.0 — 2026-10-06
 

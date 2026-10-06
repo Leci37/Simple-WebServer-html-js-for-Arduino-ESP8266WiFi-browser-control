@@ -202,6 +202,12 @@ solo, como en la wifi de un hotel; si no, `http://192.168.4.1` o
 `http://laboratorio.local`. También puede entrar en la wifi de casa
 (`config.h`); si no lo consigue en 15 segundos, crea la suya.
 
+**En clase, una placa por grupo.** Su wifi admite **8 aparatos** como mucho
+(es lo más que deja el chip: el noveno no entra), y va más suelta con 4 a 6.
+Todos manejan las mismas luces, así que cada placa hace un invento a la vez.
+Con más aparatos, mejor la wifi de un router (`config.h`): ahí el límite de 8
+desaparece, aunque la placa sigue contestando de uno en uno.
+
 **Se monta:** nada.
 
 ### 📱 En el móvil
@@ -248,15 +254,43 @@ programa; el esquema se desliza de lado; el juego pide girar el móvil.
 |---|---|---|
 | 🔴 LED rojo / 🟡 amarillo / 🟢 verde | pata larga (+), cada una con su resistencia de 220 Ω | **D5** / **D6** / **D7** |
 | Los tres LEDs | patas cortas (−) | **GND** |
-| 🔊 Zumbador pasivo (opcional) | + / − | **D8** / **GND** |
+| 🔊 Zumbador pasivo (opcional), mejor piezoeléctrico | + / − | **D8** / **GND** |
 | 🎤 Micrófono (MAX4466, MAX9814, KY-038…) | OUT (o AO) / VCC / GND | **A0** / **3V3** / **GND** |
 | 👻 Sensor HC-SR04 | VCC / GND / TRIG | **VIN** (5 V) / **GND** / **D1** |
 | 👻 Sensor HC-SR04 | ECHO, por una resistencia de 1 kΩ (y otra de 2 kΩ de D2 a GND) | **D2** |
-| 🔘 Botón de peatones y del juego | ya viene en la placa: el botón **FLASH** | D3 |
+| 🔘 Botón de peatones y del juego | ya viene en la NodeMCU: el botón **FLASH** (en una Wemos D1 mini, un pulsador entre D3 y GND) | D3 |
 
 Siempre **con la placa desenchufada** al cambiar cables. Los pines se cambian
 en [`laboratorio/config.h`](laboratorio/config.h); la chuleta de la placa, en
 [docs/img/nodemcu-pinout.jpg](docs/img/nodemcu-pinout.jpg).
+
+Del zumbador: uno **piezoeléctrico** va directo a D8. Uno de bobina (los
+magnéticos) pide más corriente de la que da un pin, y un módulo de tres patas
+con transistor puede tener D8 en alto al arrancar, y entonces la placa no
+arranca.
+
+### ¿En qué placa va?
+
+En un **ESP8266** con los pines de la NodeMCU. El firmware ocupa poco: 395 kB
+de su mega de programa (37 %), 32 kB de RAM (39 %; del Laboratorio, unos 4
+kB: el resto es la wifi del núcleo) y la web, 87 kB comprimidos que se mandan
+desde la flash a trozos, sin gastar RAM. Al arrancar quedan unos 49 kB para la
+wifi y las conexiones.
+El «94 %» de IRAM que dice el compilador cuenta también los 32 kB de caché: de
+código de verdad quedan 3,8 kB, casi todo del núcleo.
+
+| Placa | ¿Va? | Lo que hay que saber |
+|---|---|---|
+| **NodeMCU v2 o v3** (ESP-12E/F, 4 MB) | Sí, tal cual | La de este README. Placa en el IDE: «NodeMCU 1.0 (ESP-12E Module)». |
+| **Wemos / LOLIN D1 mini** (4 MB) | Sí, el mismo firmware | No trae botón FLASH: un pulsador entre D3 y GND. Su pin «5V» hace de VIN. Placa: «LOLIN(WEMOS) D1 R2 & mini». |
+| **ESP-12E/F suelto** | Sí, con su circuito | Hay que ponerle lo que trae la NodeMCU: regulador de 3,3 V, resistencias en EN, RST, GPIO0 y GPIO15, adaptador USB-serie y un divisor en A0 (el chip sólo lee hasta 1 V; sin él, el micrófono satura). |
+| **Wemos D1 R1** (con forma de Arduino Uno) | No sin cambios | Compila, pero sus D1…D8 son otros pines: D1 es el TX y D8, un pin de arranque. |
+| **ESP-01 / ESP-01S** | No | Sólo cuatro pines y ninguno analógico: no caben las luces, el sensor y el micrófono. |
+
+Compilado con el núcleo ESP8266 3.1.2 para la NodeMCU 1.0 y 0.9, la D1 mini,
+la D1 mini Lite (1 MB) y la D1 mini Pro: el mismo tamaño en todas. Con la
+placa «Generic ESP8266 Module» se para a propósito (`config.h`), porque esa
+no tiene los nombres D1…D8.
 
 ## Cargar la placa
 

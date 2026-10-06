@@ -44,7 +44,7 @@ color), sus partes (texto, desplegables, números) y qué hace al ejecutarse.
 
 Cualquier programa que sepa hacer una petición HTTP puede mandar en la placa:
 `/api/light?color=red&on=1`, `/api/state`… (la lista, en el
-[README](../README.md#la-api-para-mayores)). Contesta en JSON y lleva CORS
+[README](../README.md#la-api)). Contesta en JSON y lleva CORS
 (`Access-Control-Allow-Origin: *`), así que también se puede usar desde una web
 que no sea la de la placa.
 

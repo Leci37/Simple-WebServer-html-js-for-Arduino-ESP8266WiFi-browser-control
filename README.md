@@ -3,18 +3,18 @@
 Tres inventos y un juego para niños y niñas con una placa **NodeMCU
 (ESP8266)**, de la familia de herramientas **zlecitool** de **tuisku**
 ([tuisku.eu](https://tuisku.eu)): un **semáforo**, un **sonómetro**, un
-**detector de fantasmas** y **¡Salta, Chispa!**, un juego que se juega con la
-placa. Todo se maneja desde el móvil, la tableta o el ordenador, y se
+**detector de fantasmas** (cada uno con sus juegos) y **¡Salta, Chispa!**, un
+juego de correr y saltar que se juega con la placa, solo o de dos en dos. Todo se maneja desde el móvil, la tableta o el ordenador, y se
 **programa con bloques, como en Scratch**. La web vive dentro de la placa: no
 hace falta internet, ni cuentas, ni instalar nada.
 
 ![La portada, servida por la placa: los tres inventos y el juego](docs/img/portada.png)
 
 *La portada, tal como la sirve la placa en su propia wifi. Chispa, la
-bombilla, es la mascota. Toda la web (62 kB comprimidos) está dentro del
+bombilla, es la mascota. Toda la web (87 kB comprimidos) está dentro del
 firmware.*
 
-Este README va con la versión **1.1.0** (ver [CHANGELOG.md](CHANGELOG.md)).
+Este README va con la versión **1.2.0** (ver [CHANGELOG.md](CHANGELOG.md)).
 Hoy el Laboratorio funciona solo, sin el núcleo `zlecitool-core`; cómo
 entraría en la plataforma está en [docs/PLATAFORMA.md](docs/PLATAFORMA.md).
 
@@ -28,8 +28,9 @@ entraría en la plataforma está en [docs/PLATAFORMA.md](docs/PLATAFORMA.md).
 
 ## Qué hace, pieza a pieza
 
-Cada invento tiene tres pestañas: **Jugar**, **Programar** (con cinco retos) y
-**Montar** (con el dibujo de los cables). En cada pieza, «Se monta» dice lo
+Cada invento, y también el juego, tiene tres pestañas: **Jugar**,
+**Programar** (con cinco o seis retos) y **Montar** (con el dibujo de los
+cables). En cada pieza, «Se monta» dice lo
 que hay que conectar a la placa. Todo vive a la vez en la misma placa y con
 las mismas tres luces: se monta una vez y se pasa de un invento a otro sin
 desmontar nada.
@@ -44,9 +45,17 @@ peatones se pone verde y el zumbador pita para quien no ve.
 
 ![El semáforo con el rojo y el peatón en verde, y los modos](docs/img/semaforo.png)
 
+Y un juego para moverse: **🟢🔴 Luz roja, luz verde**. Se empieza a más de
+40 cm de la placa; en verde se avanza hacia ella y en rojo, ¡quieto! El sensor
+de distancia hace de árbitro: si en rojo te mueves más de 6 cm, vuelta a la
+salida. Gana quien llega a 12 cm, y el mejor tiempo queda de récord.
+
+![Luz roja, luz verde: en verde, a 54 cm de la placa y avanzando](docs/img/luzroja.png)
+
 **Se monta:** tres LEDs, cada uno con su resistencia de 220 Ω, en D5 (rojo),
 D6 (amarillo) y D7 (verde); el zumbador en D8, si se quiere sonido. El botón
-de peatones ya está en la placa.
+de peatones ya está en la placa. Para «Luz roja, luz verde», el sensor de
+distancia del detector de fantasmas.
 
 ### 🧩 Programar con bloques
 
@@ -58,8 +67,10 @@ que va por ahí brilla, como en Scratch. Por familias y con sus colores:
 el botón, a que haya ruido o a que algo se acerque; «si el ruido es…», «si
 algo está a menos de…»). Los bucles dicen por qué vuelta van; lo que nunca
 llegará a ejecutarse (debajo de un «por siempre») sale en gris. Cada invento
-enseña sus bloques, trae un ejemplo y cinco retos con estrellas. El programa
-se guarda en el navegador.
+enseña sus bloques, trae un ejemplo y sus retos con estrellas. En el juego
+hay además ⚡ eventos, «cuando Chispa salte, choque, coja un rayo…», que
+esperan cada uno por su cuenta a la vez que el resto del programa. El
+programa se guarda en el navegador.
 
 ![El editor de bloques ejecutando el semáforo de ejemplo: «esperar 3 segundos» brilla y el bucle va por la vuelta 1 de 3](docs/img/bloques.png)
 
@@ -70,10 +81,15 @@ se guarda en el navegador.
 Una aguja de 0 a 100 (como los decibelios: el oído va a saltos), la cara de
 Chispa, una gráfica de los últimos 30 segundos y, en la placa, las luces del
 semáforo: verde, amarillo o rojo según el ruido. Los colores y la
-sensibilidad se ajustan con deslizadores. Dos juegos: el **reto del
-silencio** (diez segundos sin llegar al amarillo) y el **récord de palmada**.
+sensibilidad se ajustan con deslizadores. Tres juegos: el **reto del
+silencio** (diez segundos sin llegar al amarillo), el **récord de palmada** y
+el **⚔️ duelo de palmadas**: dos equipos se turnan para dar la palmada más
+fuerte, a tres rondas, y la luz de la placa dice quién va ganando (amarilla
+si hay empate).
 
 ![El sonómetro: la aguja, la gráfica con una palmada y las luces de la placa](docs/img/sonometro.png)
+
+![El duelo de palmadas: el rojo ha hecho 88 y le toca al verde](docs/img/duelo.png)
 
 **Se monta:** un micrófono con amplificador (MAX4466 o MAX9814; también valen
 los KY-038, que oyen menos): OUT en A0, VCC en 3V3 y GND en GND.
@@ -83,9 +99,12 @@ los KY-038, que oyen menos): OUT en A0, VCC en 3V3 y GND en GND.
 Un radar de ultrasonidos: cuanto más cerca está algo, más **energía
 espectral** (de 0 a 5), más se deja ver el fantasma y más deprisa pita la
 placa. A 5, «¡BUUU!» y un fantasma cazado (con su flash). Las distancias de
-«cerca» y «lejos» se ajustan.
+«cerca» y «lejos» se ajustan. En la **⏱ caza contrarreloj** hay un minuto para
+cazar todos los que se pueda, con el reloj y el marcador encima del radar.
 
 ![El detector a 9 cm: el radar, la energía al máximo y el fantasma](docs/img/fantasmas.png)
+
+![La caza contrarreloj: quedan 52 segundos y van tres fantasmas](docs/img/contrarreloj.png)
 
 **Se monta:** un sensor HC-SR04: VCC en VIN (5 V), GND en GND, TRIG en D1 y
 ECHO en D2 pasando por una resistencia de 1 kΩ, con otra de 2 kΩ de D2 a GND
@@ -97,19 +116,44 @@ VCC en 3V3 y ECHO directo a D2.
 Como el dinosaurio de Chrome cuando no hay internet, pero con Chispa, dibujos
 de colores, día y noche, y **mandos de verdad**: el **botón FLASH** de la
 placa, una **palmada** o la **mano** a menos de 15 cm del sensor (y siempre
-tocando la pantalla o con la barra espaciadora). Salen cosas que no apetecen:
-cactus, deberes, brócoli, el libro de mates, un coche con prisa y el
-**Nubarrón**, que tira exámenes desde arriba. Ayudan tres poderes (escudo,
-cohete y cámara lenta) y hay rayos para coger; tres vidas. A los 800 m llega
-la **Súper Cosechadora**: sólo se salta con el cohete, y es el final de la
-demo. Mientras nadie juega, la pantalla de inicio juega sola. Las luces de la
-placa van con la partida: verde corriendo, amarillo con un poder, rojo al
-chocar.
+tocando la pantalla o con la barra espaciadora). Con la mano entre 15 y 30 cm
+(o la flecha ↓, o «Agáchate»), Chispa **se agacha** y el examen volador le
+pasa por encima (también se puede saltar). Salen cosas que no apetecen: cactus, deberes, brócoli, el
+libro de mates, un coche con prisa y el **Nubarrón**, que tira exámenes desde
+arriba. Ayudan tres poderes (escudo, cohete y cámara lenta) y hay rayos para
+coger; tres vidas, o cinco en **🐢 modo tortuga**, que va más despacio.
+Mientras nadie juega, la pantalla de inicio juega sola. Las luces de la placa
+van con la partida: verde corriendo, amarillo con un poder, rojo al chocar.
+
+- **Tres mundos:** el campo 🌵, la granja 🐔 y la luna 🌙, donde se salta más
+  alto. Cada uno tiene sus obstáculos, y ganar uno abre el siguiente.
+- **El final, por fases.** A los 800 m llega la **Súper Cosechadora**: primero
+  tira pacas de paja, luego pide tres saltos seguidos y al final sólo se salta
+  con el cohete. Al ganar, de una a tres estrellas según los rayos cogidos.
+- **Dos jugadores**, con la pantalla partida: el 1 salta con el botón (o la
+  tecla A) y el 2 con palmadas (o la L). Gana quien llegue más lejos.
+- **Récords de la clase:** quien entra entre los cinco mejores pone un alias
+  (nunca el nombre de verdad), y la placa los guarda en su memoria flash: se
+  ven desde cualquier tableta y duran aunque se desenchufe.
+- **Para coleccionar:** los rayos de todas las partidas abren **colores de
+  Chispa**, y hay **nueve pegatinas** que ganar.
+- **Se programa:** con bloques «⚡ cuando…», por ejemplo que la luz verde se
+  encienda en cada salto y la roja pite en cada choque.
 
 <p>
+<img src="docs/img/juego-inicio.png" width="420" alt="El inicio: cuántos jugáis, a qué velocidad y en qué mundo; aquí, en la luna">
 <img src="docs/img/juego.png" width="420" alt="De noche, con el cohete: Chispa vuela entre rayos">
-<img src="docs/img/juego-cosechadora.png" width="420" alt="El final: la Súper Cosechadora y «¡Ahora! ¡Salta con el cohete!»">
 </p>
+<p>
+<img src="docs/img/juego-cosechadora.png" width="420" alt="El final, en su tercera fase: «¡Ahora! ¡Salta con el cohete!»">
+<img src="docs/img/juego-fin.png" width="420" alt="Fin de la partida: lo que te pilló, los metros y los récords de la clase, con el alias">
+</p>
+
+![Dos jugadores: arriba el del botón, abajo el de las palmadas](docs/img/juego-dos.png)
+
+![La pestaña Jugar: con qué saltas (con lo que oye y ve la placa), los colores de Chispa, las pegatinas y los récords](docs/img/juego-jugar.png)
+
+![Programar el juego: el ejemplo con dos bloques «⚡ cuando…»](docs/img/juego-bloques.png)
 
 **Se monta:** nada para el botón. Para la palmada, el micrófono del
 sonómetro; para la mano, el sensor del detector.
@@ -152,18 +196,26 @@ programa; el esquema se desliza de lado; el juego pide girar el móvil.
   (`ESP8266WebServer`, `DNSServer`, `ESP8266mDNS`): cargarlo es abrir el
   `.ino` y pulsar «Subir». Compila con la 3.1.2 y con la 2.7.4.
 - **La web, dentro del firmware:** se escribe en `web/` como ficheros normales
-  y `tools/build_web.py` la comprime (211 kB → 62 kB) en
+  y `tools/build_web.py` la comprime (301 kB → 87 kB) en
   `laboratorio/web_pages.h`, con su ETag (el móvil no la vuelve a bajar si no
   ha cambiado). Nada viene de internet: ni fuentes ni librerías.
 - **Las palmadas,** en cada lectura del micrófono (no cada 150 ms): en el
   juego, saltar tarde es chocar.
+- **Los récords de la clase, en la flash:** en la «EEPROM» que trae el núcleo
+  ESP8266 (sin librerías aparte). Sólo se escribe cuando alguien entra entre
+  los cinco. El alias se limpia en la placa (sin `<>"&`, 12 letras como
+  mucho, contando bien la «ñ» y los emojis), y se borran con
+  `/api/records?clear=1`.
 - **El simulador** (`tools/simulador.py`): la misma lógica que el firmware, en
   Python, con un micrófono y un sensor de mentira. Sirve para tocar la web sin
   placa y para las pruebas.
-- **Las pruebas:** 78, con pytest y Chromium: que el firmware, el simulador y
-  la web dicen lo mismo (las órdenes, la forma del estado, los ajustes), los
-  bloques ejecutándose, el juego con cada mando (hasta ganar a la
-  cosechadora), y que nada se sale de un móvil de 360 px.
+- **Las pruebas:** 159, con pytest y Chromium: que el firmware, el simulador y
+  la web dicen lo mismo (las órdenes, la forma del estado, los ajustes; el
+  alias de los récords se compara compilando el del firmware), los bloques
+  ejecutándose (también los «⚡ cuando…» a la vez), el juego con cada mando y
+  cada idea nueva (dos jugadores, mundos, tortuga, agacharse, récords,
+  pegatinas, el final por fases), los juegos de cada invento, y que nada se
+  sale de un móvil de 360 px.
 - **La API,** para programarla desde fuera ([abajo](#la-api)).
 
 ## Cómo se monta
@@ -227,6 +279,8 @@ probar escribiéndolas en el navegador.
 | `/api/beep?hz=880&ms=200` | Un pitido o una nota en el zumbador. |
 | `/api/walk` | Como pulsar el botón FLASH. |
 | `/api/settings?soundRed=80&ghostNear=25…` | Cambia los ajustes que se nombran. |
+| `/api/records` | Los récords de la clase de ¡Salta, Chispa!: los cinco mejores. Con `clear=1`, los borra. |
+| `/api/record?alias=Rayo&m=906&t=0&w=field` | Un récord nuevo: `t=1` si es en modo tortuga; `w`, el mundo (`field`, el campo; `farm`, la granja; `moon`, la luna). Contesta la lista y el puesto (0 si no entra). |
 | `/api` | Esta lista. |
 
 ```python
@@ -265,6 +319,8 @@ laboratorio/           el firmware (una pestaña del IDE por parte)
 ├── ghost.h            👻 el sensor de distancia
 ├── buzzer.h           🔊 el zumbador
 ├── network.h          📶 la wifi, el portal cautivo y laboratorio.local
+├── records.h          🏆 los récords de la clase, en la flash
+├── alias.h            ✏️ cómo se limpia el alias de un récord (sin nada de Arduino)
 ├── web_api.h          🌐 la web y la API
 └── web_pages.h        la web comprimida (generada: no se toca)
 web/                   la web: una página por invento, el juego y lo común
@@ -276,7 +332,7 @@ tools/
 ├── build_web.py       web/ → laboratorio/web_pages.h (y --check)
 ├── simulador.py       la placa en Python, para probar sin ella
 └── capturas.py        las capturas de este README
-tests/                 firmware ↔ simulador ↔ web, las páginas y el juego en Chromium
+tests/                 firmware ↔ simulador ↔ web, los récords, las páginas y los juegos en Chromium
 docs/                  PLATAFORMA, BLOQUES, NUEVO_INVENTO; docs/img/, las capturas
 .github/workflows/     las pruebas y la compilación del firmware en cada push
 ```
@@ -299,12 +355,16 @@ firmware para la NodeMCU con `arduino-cli`. En rojo no se sube nada encima.
 **English summary.** A kids' lab for a NodeMCU (ESP8266) board, part of the
 tuisku zlecitool family: a traffic light, a sound meter and a "ghost
 detector" (an ultrasonic distance sensor), all on the same board and the same
-three LEDs, plus a Chrome-dino-style runner game played with the board's
-FLASH button, a clap or a hand over the sensor. The board hosts its own Wi-Fi
+three LEDs, each with its own mini-games (a clap duel, a one-minute ghost
+hunt, red light / green light with the distance sensor), plus a
+Chrome-dino-style runner played with the board's FLASH button, a clap or a
+hand over the sensor: three worlds, a final boss in phases, two players,
+turtle mode, ducking, stickers, colours to unlock, and class records kept
+in the board's flash (/api/records, /api/record). The board hosts its own Wi-Fi
 with a captive portal and serves a kid-friendly web app (Spanish) with live
 controls, wiring diagrams and a Scratch-like block editor that runs sequences
 on the board. No external Arduino libraries are needed. A JSON/CORS API makes
-it scriptable; a Python simulator and 78 pytest/Playwright tests cover the
-web, the API and the game. How it would join the zlecitool platform (boards
+it scriptable; a Python simulator and 159 pytest/Playwright tests cover the
+web, the API, the records and the games. How it would join the zlecitool platform (boards
 as core "devices", schools as organisations, AI that writes block programs):
 docs/PLATAFORMA.md.

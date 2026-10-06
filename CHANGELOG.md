@@ -18,20 +18,35 @@ y crece con nueve ideas, y cada invento trae un juego nuevo.
   - **Récords de la clase**: los cinco mejores, con un alias.
   - **Colores de Chispa**, que se abren juntando rayos, y **nueve pegatinas**.
   - **Agacharse**: con la mano entre 15 y 30 cm del sensor, la flecha ↓ o el
-    botón «Agáchate». El examen volador sólo se esquiva así.
+    botón «Agáchate». Así pasa por encima el examen volador (o se salta).
   - **Modo tortuga**: más despacio y con cinco vidas.
   - **Programar el juego** con bloques: los nuevos «⚡ cuando Chispa salte,
     choque, coja un rayo…» funcionan a la vez que el resto del programa.
 - **Duelo de palmadas** en el sonómetro, **caza contrarreloj** en el detector
   de fantasmas y **luz roja, luz verde** en el semáforo (con el sensor de
-  distancia). Cada uno con su reto.
+  distancia). El duelo y la caza traen su reto.
 - **La placa guarda los récords de la clase** en su memoria flash: duran
-  aunque se desenchufe o se vuelva a cargar el firmware. Órdenes nuevas:
-  `/api/records` (con `clear=1`, los borra) y `/api/record`. El alias se
-  limpia igual en la placa y en el simulador: una prueba compila el del
-  firmware en el ordenador y los compara.
-- La web en la placa pasa de 62 a 86 kB comprimidos. El firmware usa el 37 %
-  de la flash.
+  aunque se desenchufe o se vuelva a cargar el firmware, y se escribe como
+  mucho una vez cada 10 segundos. Órdenes nuevas: `/api/records` (con
+  `clear=1`, los borra) y `/api/record` (los mundos, en inglés: `field`,
+  `farm` y `moon`). El alias se limpia igual en la placa y en el simulador:
+  una prueba compila el del firmware en el ordenador y los compara.
+- **Arreglado sobre el diseño**, con su prueba cada uno:
+  - en el móvil, los botones de las esquinas del inicio se pisaban y el cartel
+    se salía por los lados;
+  - con dos jugadores, la placa pitaba (y el micrófono lo oía como palmadas
+    del jugador 2) y la mano agachaba al jugador 1;
+  - si mientras jugabas otros llegaban más lejos, el final decía «Guardado en
+    la placa» sin estarlo; ahora la lista se pide otra vez al acabar;
+  - un «⚡ cuando…» arrastrado se quedaba dentro de un bucle, y «Parar» y
+    «Ejecutar» seguidos dejaban vivo un trozo del programa anterior;
+  - el cartel de la pegatina de los tres escudos no se veía;
+  - en el duelo, una revancha justo al acabar heredaba el parpadeo del
+    ganador; en «Luz roja, luz verde», a 40 cm justos se podía empezar y
+    Chispa no llegaba a celebrar la llegada.
+- La web en la placa pasa de 62 a 87 kB comprimidos. Con el núcleo 3.1.2, el
+  código en la flash pasa del 34 % al 37 % de su mega, y la RAM sigue en el
+  39 %.
 - Pruebas para todo lo nuevo; capturas y README al día.
 
 ## 1.1.0 — 2026-10-05

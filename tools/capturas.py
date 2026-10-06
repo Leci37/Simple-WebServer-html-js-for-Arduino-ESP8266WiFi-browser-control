@@ -158,7 +158,7 @@ def main() -> int:
             pg.close()
 
             # v3: el final de una partida que entra en los récords de la clase.
-            for alias, m, extra in (("Rayo", 906, ""), ("Cometa", 640, "&t=1"), ("Trueno", 512, "&w=granja"), ("Pulga", 330, "")):
+            for alias, m, extra in (("Rayo", 906, ""), ("Cometa", 640, "&t=1"), ("Trueno", 512, "&w=farm"), ("Pulga", 330, "")):
                 sim(f"/api/record?alias={alias}&m={m}{extra}")
             pg = page(QUIET, "/juego?prueba=1&semilla=3", height=760)
             pg.click("#start-btn")

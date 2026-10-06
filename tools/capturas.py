@@ -108,6 +108,19 @@ def main() -> int:
             shot(pg, "sonometro")
             pg.close()
 
+            # Los otros dos juegos del sonómetro: el reto del silencio, a medias,
+            # y el récord de palmada (con uno ya hecho).
+            sim("/sim?sound=12")
+            pg = page(QUIET, "/sonometro", height=900)
+            pg.evaluate("localStorage.setItem('lab.sonometro.record', '91')")
+            pg.reload()
+            pg.wait_for_selector("[data-conn].online")
+            pg.click("#silence-btn")
+            pg.wait_for_timeout(2400 + 6000)  # la cuenta atrás y seis segundos de silencio
+            shot(pg, "sonometro-juegos", ".card.games")
+            sim("/sim?sound=0")
+            pg.close()
+
             pg = page(QUIET, "/fantasmas", height=820)
             sim("/sim?cm=9")
             pg.wait_for_timeout(3600)  # que se vaya el aviso de «cazado»
@@ -157,6 +170,20 @@ def main() -> int:
             shot(pg, "juego-dos", "#frame")
             pg.close()
 
+            # Dos jugadores, al acabar: quién ha llegado más lejos.
+            pg = page(QUIET, "/juego?prueba=1&semilla=7", height=900)
+            pg.click("[data-players='2']")
+            pg.click("#start-btn")
+            pg.wait_for_function("Juego.state().duo !== null")
+            pg.evaluate("Juego.prueba.poder('escudo'); Juego.prueba.skipTo(300)")
+            pg.evaluate(
+                "() => { for (let i = 0; i < 120 * 60 && !Juego.state().duo.every((p) => p.mode !== 'play'); i++) Juego.prueba.actualiza(1 / 60); }"
+            )
+            pg.wait_for_selector("#screen-duo:not([hidden])")
+            pg.wait_for_timeout(3000)  # que acabe de caer el confeti
+            shot(pg, "juego-duo-fin", "#frame")
+            pg.close()
+
             # v3: el final de una partida que entra en los récords de la clase.
             for alias, m, extra in (("Rayo", 906, ""), ("Cometa", 640, "&t=1"), ("Trueno", 512, "&w=farm"), ("Pulga", 330, "")):
                 sim(f"/api/record?alias={alias}&m={m}{extra}")
@@ -169,6 +196,26 @@ def main() -> int:
             shot(pg, "juego-fin", "#frame")
             pg.close()
             sim("/api/records?clear=1")
+
+            # Y el otro final: la Súper Cosechadora saltada, con sus estrellas. Con
+            # el campo ya ganado otra vez, sin avisos de pegatina ni de mundo nuevo:
+            # así el cartel cabe entero.
+            pg = page(QUIET, "/juego?prueba=1&semilla=3", height=760)
+            pg.evaluate(
+                "localStorage.setItem('lab.juego.pegatinas', JSON.stringify({cosechadora: 1}));"
+                "localStorage.setItem('lab.juego.mundos', JSON.stringify({campo: true}))"
+            )
+            pg.reload()
+            pg.wait_for_selector("[data-conn].online")
+            pg.click("#start-btn")
+            pg.evaluate("Juego.prueba.invencible(true); Juego.prueba.piloto(true); Juego.prueba.skipTo(795)")
+            pg.evaluate(
+                "() => { for (let i = 0; i < 120 * 60 && Juego.state().mode !== 'win'; i++) Juego.prueba.actualiza(1 / 60); }"
+            )
+            pg.wait_for_selector("#screen-win:not([hidden])")
+            pg.wait_for_timeout(3000)  # que acabe de caer el confeti
+            shot(pg, "juego-victoria", "#frame")
+            pg.close()
 
             # v3: la pestaña Jugar, con algunos colores y pegatinas ya ganados.
             pg = page(QUIET, "/juego?prueba=1&semilla=3", height=900)

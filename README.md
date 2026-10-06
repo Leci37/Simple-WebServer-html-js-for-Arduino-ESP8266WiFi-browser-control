@@ -36,6 +36,18 @@ que hay que conectar a la placa. Todo vive a la vez en la misma placa y con
 las mismas tres luces: se monta una vez y se pasa de un invento a otro sin
 desmontar nada.
 
+**Todos los juegos**, cada uno con su captura más abajo:
+
+| Juego | Dónde | Se juega con |
+|---|---|---|
+| 🎮 ¡Salta, Chispa! (uno o dos jugadores) | [su página](#-salta-chispa) | el botón FLASH, una palmada o la mano; o tocando la pantalla |
+| 🟢🔴 Luz roja, luz verde | [el semáforo](#-el-semáforo) | el sensor de distancia: tú eres la ficha |
+| 🤫 Reto del silencio | [el sonómetro](#-el-sonómetro) | el micrófono: diez segundos sin llegar al amarillo |
+| 👏 Récord de palmada | [el sonómetro](#-el-sonómetro) | el micrófono |
+| ⚔️ Duelo de palmadas | [el sonómetro](#-el-sonómetro) | el micrófono, por equipos |
+| 👻 Cazar fantasmas | [el detector](#-el-detector-de-fantasmas) | el sensor de distancia: la mano, hasta el 5 |
+| ⏱ Caza contrarreloj | [el detector](#-el-detector-de-fantasmas) | el sensor de distancia, durante un minuto |
+
 ### 🚦 El semáforo
 
 Las luces de la pantalla son las de verdad: se tocan y se encienden en la
@@ -46,7 +58,7 @@ peatones se pone verde y el zumbador pita para quien no ve.
 
 ![El semáforo con el rojo y el peatón en verde, y los modos](docs/img/semaforo.png)
 
-Y un juego para moverse: **🟢🔴 Luz roja, luz verde**. Se empieza a más de
+Y debajo, un juego para moverse: **🟢🔴 Luz roja, luz verde**. Se empieza a más de
 40 cm de la placa; en verde se avanza hacia ella y en rojo, ¡quieto! El sensor
 de distancia hace de árbitro: si en rojo te mueves más de 6 cm, vuelta a la
 salida. Gana quien llega a 12 cm, y el mejor tiempo queda de récord.
@@ -86,9 +98,12 @@ sensibilidad se ajustan con deslizadores. Tres juegos: el **reto del
 silencio** (diez segundos sin llegar al amarillo), el **récord de palmada** y
 el **⚔️ duelo de palmadas**: dos equipos se turnan para dar la palmada más
 fuerte, a tres rondas, y la luz de la placa dice quién va ganando (amarilla
-si hay empate).
+si hay empate). La placa guarda dos segundos el pico de cada palmada, así que
+en el duelo cuenta aunque sea cortísima (la de antes del «¡AHORA!», no).
 
 ![El sonómetro: la aguja, la gráfica con una palmada y las luces de la placa](docs/img/sonometro.png)
+
+![Los juegos del sonómetro: el reto del silencio, a los seis segundos, y el récord de palmada](docs/img/sonometro-juegos.png)
 
 ![El duelo de palmadas: el rojo ha hecho 88 y le toca al verde](docs/img/duelo.png)
 
@@ -101,7 +116,8 @@ Un radar de ultrasonidos: cuanto más cerca está algo, más **energía
 espectral** (de 0 a 5), más se deja ver el fantasma y más deprisa pita la
 placa. A 5, «¡BUUU!» y un fantasma cazado (con su flash). Las distancias de
 «cerca» y «lejos» se ajustan. En la **⏱ caza contrarreloj** hay un minuto para
-cazar todos los que se pueda, con el reloj y el marcador encima del radar.
+cazar todos los que se pueda, con el reloj y el marcador encima del radar;
+al acabar, el reloj se queda cuatro segundos con el resultado y se va.
 
 ![El detector a 9 cm: el radar, la energía al máximo y el fantasma](docs/img/fantasmas.png)
 
@@ -147,10 +163,15 @@ van con la partida: verde corriendo, amarillo con un poder, rojo al chocar.
 </p>
 <p>
 <img src="docs/img/juego-cosechadora.png" width="420" alt="El final, en su tercera fase: «¡Ahora! ¡Salta con el cohete!»">
+<img src="docs/img/juego-victoria.png" width="420" alt="¡Has saltado la Súper Cosechadora!: una estrella (la siguiente, con 10 rayos), ir a la granja y entrar en los récords de la clase">
+</p>
+<p>
 <img src="docs/img/juego-fin.png" width="420" alt="Fin de la partida: lo que te pilló, los metros y los récords de la clase, con el alias">
 </p>
-
-![Dos jugadores: arriba el del botón, abajo el de las palmadas](docs/img/juego-dos.png)
+<p>
+<img src="docs/img/juego-dos.png" width="420" alt="Dos jugadores: arriba el del botón, abajo el de las palmadas">
+<img src="docs/img/juego-duo-fin.png" width="420" alt="Dos jugadores, al acabar: gana el jugador 1, con 414 m contra 67">
+</p>
 
 ![La pestaña Jugar: con qué saltas (con lo que oye y ve la placa), los colores de Chispa, las pegatinas y los récords](docs/img/juego-jugar.png)
 
@@ -197,7 +218,7 @@ programa; el esquema se desliza de lado; el juego pide girar el móvil.
   (`ESP8266WebServer`, `DNSServer`, `ESP8266mDNS`): cargarlo es abrir el
   `.ino` y pulsar «Subir». Compila con la 3.1.2 y con la 2.7.4.
 - **La web, dentro del firmware:** se escribe en `web/` como ficheros normales
-  y `tools/build_web.py` la comprime (301 kB → 87 kB) en
+  y `tools/build_web.py` la comprime (303 kB → 87 kB) en
   `laboratorio/web_pages.h`, con su ETag (el móvil no la vuelve a bajar si no
   ha cambiado). Nada viene de internet: ni fuentes ni librerías.
 - **Las palmadas,** en cada lectura del micrófono (no cada 150 ms): en el
@@ -210,7 +231,7 @@ programa; el esquema se desliza de lado; el juego pide girar el móvil.
 - **El simulador** (`tools/simulador.py`): la misma lógica que el firmware, en
   Python, con un micrófono y un sensor de mentira. Sirve para tocar la web sin
   placa y para las pruebas.
-- **Las pruebas:** 160, con pytest y Chromium: que el firmware, el simulador y
+- **Las pruebas:** 163, con pytest y Chromium: que el firmware, el simulador y
   la web dicen lo mismo (las órdenes, la forma del estado, los ajustes; el
   alias de los récords se compara compilando el del firmware), los bloques
   ejecutándose (también los «⚡ cuando…» a la vez), el juego con cada mando y
@@ -366,7 +387,7 @@ in the board's flash (/api/records, /api/record). The board hosts its own Wi-Fi
 with a captive portal and serves a kid-friendly web app (Spanish) with live
 controls, wiring diagrams and a Scratch-like block editor that runs sequences
 on the board. No external Arduino libraries are needed. A JSON/CORS API makes
-it scriptable; a Python simulator and 160 pytest/Playwright tests cover the
+it scriptable; a Python simulator and 163 pytest/Playwright tests cover the
 web, the API, the records and the games. How it would join the zlecitool platform (boards
 as core "devices", schools as organisations, AI that writes block programs):
 docs/PLATAFORMA.md.

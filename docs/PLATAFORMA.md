@@ -30,7 +30,7 @@ exactamente la de hoy.
 ## 3. Una herramienta nueva: `lab`
 
 Desde la plantilla, como todas: `zlecitool-lab`, slug `lab`, trabajando en
-`_ztool_main`.
+`_ztool_dev`.
 
 - **¿Pública o de empresa?** (del dueño). La propuesta: **de empresa**
   (`rename_tool.py --business`), con el **colegio como empresa**: sus profes

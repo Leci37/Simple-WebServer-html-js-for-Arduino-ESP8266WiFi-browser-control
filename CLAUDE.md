@@ -38,8 +38,9 @@ tipo Scratch. Lee el [README](README.md); para crecer,
 
 ## Ramas
 
-Se trabaja en `_ztool_main`, como en el resto de herramientas zlecitool. `main`
-no se toca sin que lo pida el dueño; `main_2024-03-13` es el archivo del
+Se trabaja en `_ztool_dev`, como en el resto de herramientas zlecitool;
+`_ztool_main` sólo recibe lo que el dueño fusiona. `main` no se toca sin que
+lo pida el dueño; `main_2024-03-13` es el archivo del
 proyecto anterior.
 
 ## Comandos

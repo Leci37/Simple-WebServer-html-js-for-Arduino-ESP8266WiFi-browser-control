@@ -339,15 +339,16 @@ docs/                  PLATAFORMA, BLOQUES, NUEVO_INVENTO; docs/img/, las captur
 
 ## Ramas
 
-Como el resto de herramientas zlecitool, el trabajo va en **`_ztool_main`**.
-`main` sólo recibe lo que el dueño pida fusionar (por pull request). El
+Como el resto de herramientas zlecitool, el trabajo va en **`_ztool_dev`**, y
+**`_ztool_main`** sólo recibe lo que el dueño fusiona. `main` sólo recibe lo
+que el dueño pida fusionar (por pull request). El
 proyecto de antes (el autómata del carro de bolas, con ESPAsyncWebServer) está
 archivado en **`main_2024-03-13`**, la fecha de su último cambio.
 
 ## CI
 
-`.github/workflows/pruebas.yml`, en cada push a `_ztool_main` o `main` y en
-cada pull request: las pruebas (pytest con Chromium) y la compilación del
+`.github/workflows/pruebas.yml`, en cada push a `_ztool_dev` o `_ztool_main` y
+en cada pull request: las pruebas (pytest con Chromium) y la compilación del
 firmware para la NodeMCU con `arduino-cli`. En rojo no se sube nada encima.
 
 ---

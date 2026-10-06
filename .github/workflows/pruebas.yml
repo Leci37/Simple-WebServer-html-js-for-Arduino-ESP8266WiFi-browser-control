@@ -2,7 +2,7 @@ name: pruebas
 
 on:
   push:
-    branches: [_ztool_main, main]
+    branches: [_ztool_dev, _ztool_main]
   pull_request:
 
 jobs:

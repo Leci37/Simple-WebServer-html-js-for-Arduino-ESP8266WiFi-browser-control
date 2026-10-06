@@ -4,7 +4,7 @@
 
 #include <Arduino.h>
 
-#define LAB_VERSION "1.2.0"
+#define LAB_VERSION "1.2.1"
 
 // --- La wifi -----------------------------------------------------------------
 // La placa crea su propia wifi, «Laboratorio-XXXX». Las cuatro últimas letras

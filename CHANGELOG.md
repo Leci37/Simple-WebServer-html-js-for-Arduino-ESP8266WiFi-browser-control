@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## 1.2.1 — 2026-10-06
+
+El diseño de Claude Design del 6 de octubre por la tarde. Su export va tal
+cual en [docs/handoff/2026-10-06/](docs/handoff/2026-10-06/), y lo que cambia
+respecto a la 1.2.0, en su [CAMBIOS.md](docs/handoff/2026-10-06/CAMBIOS.md):
+cuatro cambios pequeños, sin nada nuevo en la placa ni en su API.
+
+- **Semáforo:** «Luz roja, luz verde» baja, debajo del semáforo y de «¿Quién
+  manda?», a todo lo ancho. El bocadillo «Toca una luz…» queda junto a las
+  luces y, en el móvil, el semáforo se ve sin bajar.
+- **Duelo de palmadas:** cada turno cuenta también el pico de la placa
+  (`sound.peak`, el nivel más alto de los últimos 2 s), si ha subido después
+  del «AHORA». La página pregunta cada 100 ms y una palmada corta podía caer
+  entre dos preguntas y contar poco o nada; la que se adelanta, en la cuenta
+  atrás, sigue sin contar.
+- Durante el duelo, «¡Empezar!» (el silencio) y «¡Medir!» (la palmada) avisan
+  «Espera a que acabe el duelo 😉», en vez de no hacer nada.
+- **Caza contrarreloj:** al acabar, el reloj grande se queda 4 s con el
+  resultado y se va (se quedaba en «⏱ 0:00» hasta recargar), salvo que ya haya
+  empezado otra caza.
+- Lo demás del diseño no se copia: la app tiene arreglos que el diseño no
+  (CAMBIOS.md los cuenta) y se quedan.
+- La web en la placa pasa de 87 328 a 87 523 bytes comprimidos; el firmware,
+  igual (37 % de la flash, 39 % de la RAM). Una prueba para cada cambio, que
+  falla con la 1.2.0; capturas al día.
+
 ## 1.2.0 — 2026-10-06
 
 La web v3, la del diseño hecho en Claude Design: ¡Salta, Chispa! se rediseña

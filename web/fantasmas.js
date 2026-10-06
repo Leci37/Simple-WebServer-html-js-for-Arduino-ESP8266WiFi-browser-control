@@ -161,6 +161,10 @@ document.addEventListener("DOMContentLoaded", function () {
   function raceEnd() {
     var n = race.caught;
     race = null;
+    // El reloj grande se queda un momento con el resultado y luego se va.
+    setTimeout(function () {
+      if (!race) $("#hunt-clock").hidden = true;
+    }, 4000);
     $("#race-btn").disabled = false;
     $("#race-btn").textContent = "¡Otra vez!";
     var best = n > 0 && (raceRecord === null || n > raceRecord);

@@ -210,7 +210,8 @@ document.addEventListener("DOMContentLoaded", function () {
   $("#clap-record").textContent = record === null ? "—" : record;
 
   $("#silence-btn").addEventListener("click", function () {
-    if (silence || (duel && duel.phase !== "end")) return;
+    if (duel && duel.phase !== "end") return Lab.toast("Espera a que acabe el duelo 😉");
+    if (silence) return;
     var btn = this;
     btn.disabled = true;
     silence = { phase: "count", count: 3 };
@@ -239,7 +240,8 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   $("#clap-btn").addEventListener("click", function () {
-    if (clap || (duel && duel.phase !== "end")) return;
+    if (duel && duel.phase !== "end") return Lab.toast("Espera a que acabe el duelo 😉");
+    if (clap) return;
     this.disabled = true;
     clap = { start: Date.now(), best: 0 };
     $("#clap-text").textContent = "¡Ahora! ¡Una palmada fuerte! 👏";
@@ -247,7 +249,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function games(state) {
     var level = state.sound.level;
-    duelHear(level);
+    duelHear(level, state.sound.peak);
     if (silence && silence.phase === "run") {
       var elapsed = Date.now() - silence.start;
       $("#silence-bar").style.width = Math.min(100, elapsed / 100) + "%";
@@ -333,16 +335,20 @@ document.addEventListener("DOMContentLoaded", function () {
       duel.phase = "go";
       duel.best = 0;
       duel.goAt = Date.now();
+      // El pico que ya había antes del «AHORA» no cuenta (el de la cuenta atrás).
+      duel.peak0 = Lab.state ? Lab.state.sound.peak : 0;
       duelSay("¡Equipo " + TEAM[team] + ", <b>AHORA</b>! 👏");
       $("#" + team + "-last").textContent = "¡Ahora!";
       setTimeout(duelEndTurn, 2500);
     })();
   }
 
-  // Lo que se oye durante el turno: cuenta la palmada más fuerte.
-  function duelHear(level) {
+  // Lo que se oye durante el turno: cuenta la palmada más fuerte. El nivel se
+  // pregunta cada 100 ms y una palmada dura poco: por eso también vale el pico
+  // (se queda 2 s), si ha subido después del «AHORA».
+  function duelHear(level, peak) {
     if (!duel || duel.phase !== "go") return;
-    duel.best = Math.max(duel.best, level);
+    duel.best = Math.max(duel.best, level, peak > duel.peak0 ? peak : 0);
     $("#" + (duel.turn ? "green" : "red") + "-last").textContent = "¡Ahora! " + duel.best;
     $("#duel-bar").style.width = Math.min(100, (Date.now() - duel.goAt) / 25) + "%";
   }

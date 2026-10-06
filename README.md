@@ -14,7 +14,7 @@ hace falta internet, ni cuentas, ni instalar nada.
 bombilla, es la mascota. Toda la web (87 kB comprimidos) está dentro del
 firmware.*
 
-Este README va con la versión **1.2.0** (ver [CHANGELOG.md](CHANGELOG.md)).
+Este README va con la versión **1.2.1** (ver [CHANGELOG.md](CHANGELOG.md)).
 Hoy el Laboratorio funciona solo, sin el núcleo `zlecitool-core`; cómo
 entraría en la plataforma está en [docs/PLATAFORMA.md](docs/PLATAFORMA.md).
 
@@ -23,6 +23,7 @@ entraría en la plataforma está en [docs/PLATAFORMA.md](docs/PLATAFORMA.md).
 | [docs/PLATAFORMA.md](docs/PLATAFORMA.md) | Quien lo vaya a meter en tuisku: qué se queda en la placa, qué iría a una herramienta `lab` y qué pone ya el núcleo (cuentas, colegios, máquinas, IA). |
 | [docs/BLOQUES.md](docs/BLOQUES.md) | Quien quiera programarla con bloques o con otra herramienta (TurboWarp, Snap!, MicroBlocks…). |
 | [docs/NUEVO_INVENTO.md](docs/NUEVO_INVENTO.md) | Quien añada un invento: pines, firmware, simulador y web. |
+| [docs/handoff/](docs/handoff/) | Quien traiga un diseño nuevo: cada export de Claude Design, tal cual, con su `CAMBIOS.md` (qué se aplica y qué se queda como está en la app). |
 | [CHANGELOG.md](CHANGELOG.md) | Qué trae cada versión. |
 | [CLAUDE.md](CLAUDE.md) | Las reglas para trabajar en este repo, también para la IA. |
 

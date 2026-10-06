@@ -46,6 +46,13 @@ def run_until(page, check, limit: int = 15000, step: int = 100):
         spent += step
 
 
+def run_for(page, ms: int, step: int = 100):
+    """Como page.clock.run_for(), pero a pasitos y con respiro (ver run_until)."""
+    for _ in range(ms // step):
+        page.clock.run_for(step)
+        time.sleep(0.01)
+
+
 def text(page, selector: str) -> str:
     return page.locator(selector).inner_text()
 
@@ -123,9 +130,12 @@ def test_the_clap_duel_takes_turns_and_the_board_shows_who_leads(open_page, sim)
     wait_for(lambda: lit(sim.board.leds) == "yellow")
     assert sim.board.mode == "manual"
 
-    # Mientras dura el duelo, los otros dos juegos esperan.
-    page.locator("#clap-btn").click()
-    page.locator("#silence-btn").click()
+    # Mientras dura el duelo, los otros dos juegos esperan, y lo dicen.
+    for other in ("#clap-btn", "#silence-btn"):
+        page.evaluate("document.querySelector('.toast') && (document.querySelector('.toast').textContent = '')")
+        page.locator(other).click()
+        assert page.locator(".toast").text_content() == "Espera a que acabe el duelo 😉"
+        assert page.locator(other).is_enabled()
     assert text(page, "#clap-text") == "Récord: —"
     assert text(page, "#silence-text") == "¿Aguantáis 10 segundos sin llegar al amarillo?"
 
@@ -201,6 +211,33 @@ def test_a_rematch_right_away_starts_tied_with_only_the_yellow_light(open_page, 
     assert lit(sim.board.leds) == "yellow"
 
 
+def test_a_short_clap_counts_by_the_peak_but_not_one_before_now(open_page, sim):
+    """La página pregunta cada 100 ms y una palmada dura menos: la placa guarda
+    2 s el pico, y el duelo lo cuenta… si ha subido después del «AHORA»."""
+    page = open_duel(open_page, sim)
+    sim.api("/sim?sound=5")
+    page.locator("#duel-btn").click()
+
+    # El rojo, una palmada entre dos preguntas de la página: el nivel ya ha
+    # bajado cuando pregunta, pero el pico la ha guardado.
+    run_until(page, lambda: "AHORA" in duel_status(page), step=200)
+    sim.api("/sim?sound=70")
+    sim.api("/sim?sound=5")
+    run_until(page, lambda: text(page, "#red-last") == "¡Ahora! 70")
+    assert page.evaluate("Lab.state.sound.level") == 5
+    run_until(page, lambda: "Ahora, el verde" in duel_status(page))
+    assert "El rojo ha hecho 70" in duel_status(page)
+
+    # El verde se adelanta: da la palmada en la cuenta atrás, antes del «AHORA».
+    # El pico aún la guarda cuando llega el «AHORA», pero no cuenta.
+    run_until(page, lambda: "Equipo verde, preparados… 3" in duel_status(page))
+    sim.api("/sim?sound=90")
+    sim.api("/sim?sound=5")
+    run_until(page, lambda: page.evaluate("Lab.state.sound.peak") == 90)
+    assert "preparados" in duel_status(page)
+    run_until(page, lambda: "Ronda 1 para el rojo, 70 a 5" in duel_status(page), step=200)
+
+
 @pytest.mark.parametrize("other", ["#silence-btn", "#clap-btn"])
 def test_the_duel_waits_while_the_silence_or_clap_game_is_on(open_page, sim, other):
     page = open_page("/sonometro")
@@ -264,6 +301,11 @@ def test_the_ghost_race_counts_catches_for_a_minute_and_keeps_the_record(open_pa
     assert stored(page, "fantasmas.contrarreloj") == 2
     assert page.locator("#race-btn").is_enabled()
     assert text(page, "#race-btn") == "¡Otra vez!"
+    # El reloj grande se queda un momento con el resultado, y luego se va.
+    assert page.locator("#hunt-clock").is_visible()
+    assert text(page, "#hunt-time") == "⏱ 0:00"
+    run_for(page, 4000)
+    assert page.locator("#hunt-clock").is_hidden()
 
     # Otra vuelta con menos fantasmas: el récord se queda como estaba.
     page.locator("#race-btn").click()
@@ -275,6 +317,12 @@ def test_the_ghost_race_counts_catches_for_a_minute_and_keeps_the_record(open_pa
     assert text(page, "#race-text") == "¡Tiempo! 1 fantasma en un minuto."
     assert text(page, "#race-record") == "2"
     assert stored(page, "fantasmas.contrarreloj") == 2
+
+    # Si otra caza empieza antes de que se vaya, el reloj se queda: es el suyo.
+    page.locator("#race-btn").click()
+    run_for(page, 4500)
+    assert page.locator("#hunt-clock").is_visible()
+    assert text(page, "#hunt-time") == "⏱ 0:56"
 
 
 # ---------- 🟢🔴 Luz roja, luz verde (semáforo) ----------
@@ -295,6 +343,26 @@ def stand_at(page, sim, cm: int, step: int = 100):
 
 def toast(page) -> str:
     return page.locator(".toast").text_content()
+
+
+@pytest.mark.parametrize("width", [1280, 390])
+def test_red_light_green_light_goes_below_the_traffic_light(open_page, width):
+    """Primero el semáforo, junto al bocadillo que dice que toques sus luces, y
+    «¿Quién manda?»; debajo, a todo lo ancho, «Luz roja, luz verde»."""
+    page = open_page("/semaforo", width=width)
+
+    def box(selector):
+        b = page.locator(selector).bounding_box()
+        return b["x"], b["y"], b["x"] + b["width"], b["y"] + b["height"]
+
+    stage, controls, rl = box(".card.stage"), box(".card.controls"), box(".card.rl")
+    assert rl[1] >= max(stage[3], controls[3])
+    assert rl[0] == pytest.approx(min(stage[0], controls[0]), abs=1)
+    assert rl[2] == pytest.approx(max(stage[2], controls[2]), abs=1)
+    if width >= 860:
+        assert stage[1] == pytest.approx(controls[1], abs=1)  # lado a lado
+    # Las luces, a la vista sin bajar, también en el móvil.
+    assert stage[1] < 844
 
 
 def test_red_light_green_light_refuses_to_start_too_close_or_without_echo(open_page, sim):

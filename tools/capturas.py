@@ -80,8 +80,8 @@ def main() -> int:
             shot(pg, "portada")
             pg.close()
 
-            # Con «Luz roja, luz verde» arriba, el semáforo entero pide más alto.
-            pg = page(QUIET, "/semaforo", height=1240)
+            # El semáforo y los modos; «Luz roja, luz verde», debajo, tiene su captura.
+            pg = page(QUIET, "/semaforo", height=860)
             pg.click("[data-mode='auto']")
             pg.click("#walk-btn")
             pg.wait_for_selector("#walk-light.go", timeout=8000)

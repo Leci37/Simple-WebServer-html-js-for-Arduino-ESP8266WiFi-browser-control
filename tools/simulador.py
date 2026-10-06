@@ -18,12 +18,13 @@ import argparse
 import json
 import math
 import random
+import re
 import sys
 import threading
 import time
 from http.server import SimpleHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
-from urllib.parse import parse_qs, urlparse
+from urllib.parse import urlparse
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_web import TYPES, WEB, url_for, web_files  # noqa: E402
@@ -34,7 +35,7 @@ VERSION = "1.2.0"
 # Los récords de la clase (laboratorio/records.h y alias.h).
 RECORDS_MAX = 5
 RECORD_METERS_MAX = 999999
-WORLD_NAMES = ["campo", "granja", "luna"]
+WORLD_NAMES = ["field", "farm", "moon"]
 ALIAS_CHARS = 12
 ALIAS_DROPS = '<>"&'
 
@@ -47,7 +48,9 @@ def clean_alias(raw: str) -> str:
     """Como cleanAlias() de alias.h: sin <>"&, sin caracteres de control, sin
     espacios a los lados y con 12 letras como mucho. Lo que no era UTF-8 llega
     aquí como U+FFFD, y la placa lo tira: aquí también."""
-    kept = "".join(c for c in raw if c not in ALIAS_DROPS and c != "\ufffd" and ord(c) >= 0x20 and ord(c) != 0x7F)
+    kept = "".join(
+        c for c in raw if c not in ALIAS_DROPS and c != "\ufffd" and ord(c) >= 0x20 and not 0x7F <= ord(c) <= 0x9F
+    )
     return kept.strip(" ")[:ALIAS_CHARS]
 
 
@@ -220,12 +223,12 @@ class Board:
                     "level": self.sound["level"],
                 }
             if path == "/api/mode":
-                if args.get("set") not in MODES:
+                if arg_text(args, "set") not in MODES:
                     return 400, {"error": "set tiene que ser manual, auto, night, sound o ghost"}
-                self.set_mode(args["set"])
+                self.set_mode(arg_text(args, "set"))
                 return 200, self.state()
             if path == "/api/light":
-                color = args.get("color")
+                color = arg_text(args, "color")
                 if color not in ("red", "yellow", "green", "all"):
                     return 400, {"error": "color tiene que ser red, yellow, green o all"}
                 self.set_mode("manual")
@@ -283,9 +286,9 @@ class Board:
         alias, meters = clean_alias(args.get("alias", "")), arg_int(args, "m", 0)
         if not alias or meters <= 0:
             return 400, {"error": "hace falta un alias y los metros"}
-        world = args.get("w", WORLD_NAMES[0])
+        world = arg_text(args, "w", WORLD_NAMES[0])
         if world not in WORLD_NAMES:
-            return 400, {"error": "w tiene que ser campo, granja o luna"}
+            return 400, {"error": "w tiene que ser field, farm o moon"}
         record = {"alias": alias, "m": min(meters, RECORD_METERS_MAX), "t": 1 if arg_bool(args, "t", False) else 0, "w": world}
         at = 0
         while at < len(self.records) and self.records[at]["m"] >= record["m"]:
@@ -316,19 +319,84 @@ class Board:
             }
 
 
+# String::toInt() de la placa es atol(): los dígitos del principio («12abc» es
+# 12, «1e3» es 1) y, si no hay, 0; en 32 bits.
+INT_PREFIX = re.compile(r"[ \t\n\v\f\r]*([+-]?[0-9]+)")
+
+
 def arg_int(args: dict[str, str], name: str, fallback: int) -> int:
     if name not in args:
         return fallback
-    try:
-        return int(float(args[name]))
-    except ValueError:
+    match = INT_PREFIX.match(args[name])
+    if match is None:
         return 0
+    return max(-(2**31), min(2**31 - 1, int(match.group(1))))
 
 
 def arg_bool(args: dict[str, str], name: str, fallback: bool) -> bool:
     if name not in args:
         return fallback
-    return args[name].lower() in ("1", "true", "on")
+    return arg_text(args, name).lower() in ("1", "true", "on")
+
+
+def arg_text(args: dict[str, str], name: str, fallback: str | None = None) -> str | None:
+    """Un argumento para compararlo: la placa compara con strcmp(), que se para
+    en el primer '\\0' (un «%00», o un «%» mal escrito, que deja un 0)."""
+    if name not in args:
+        return fallback
+    return args[name].split("\0")[0]
+
+
+def url_decode(text: str) -> str:
+    """Como urlDecode() de ESP8266WebServer: «+» es un espacio y un «%» con dos
+    letras detrás es un byte, lo que strtol("0x" + esas dos, 16) saque (0 si
+    no son hexadecimales). Lo que no es UTF-8 queda como U+FFFD."""
+    raw = text.encode("latin-1", "replace")  # http.server deja la URL así: un carácter por byte
+    out = bytearray()
+    i = 0
+    while i < len(raw):
+        byte = raw[i]
+        i += 1
+        if byte == ord("%") and i + 1 < len(raw):
+            pair = raw[i : i + 2].decode("latin-1")
+            i += 2
+            digits = ""
+            for ch in pair:
+                if ch not in "0123456789abcdefABCDEF":
+                    break
+                digits += ch
+            out.append(int(digits, 16) if digits else 0)
+        elif byte == ord("+"):
+            out.append(ord(" "))
+        else:
+            out.append(byte)
+    return out.decode("utf-8", "replace")
+
+
+def parse_query(data: str) -> dict[str, str]:
+    """Los argumentos como _parseArgumentsPrivate() de ESP8266WebServer: se
+    separan con «&» o «;», un «w=» vacío (o un «w» solo) también está, y si
+    uno se repite manda el primero, como server.arg()."""
+    args: dict[str, str] = {}
+    pos, size = 0, len(data)
+    while True:
+        while pos < size and data[pos] in "&;":
+            pos += 1
+        equal = data.find("=", pos)
+        nexts = [i for i in (data.find("&", pos), data.find(";", pos)) if i != -1]
+        nxt = min(nexts) if nexts else -1
+        key_end = nxt if equal == -1 or (nxt != -1 and equal > nxt) else equal
+        if key_end == -1:
+            key_end = size
+        if pos < key_end:
+            value = ""
+            if equal != -1 and (nxt == -1 or equal < nxt - 1):
+                value = url_decode(data[equal + 1 : nxt if nxt != -1 else size])
+            args.setdefault(url_decode(data[pos:key_end]), value)
+        if nxt == -1:
+            break
+        pos = nxt + 1  # la placa, con una clave vacía («=x&…»), se quedaría aquí dando vueltas
+    return args
 
 
 def make_handler(board: Board):
@@ -350,7 +418,7 @@ def make_handler(board: Board):
 
         def do_GET(self) -> None:  # noqa: N802 - nombre de la librería
             url = urlparse(self.path)
-            args = {k: v[-1] for k, v in parse_qs(url.query).items()}
+            args = parse_query(url.query)
             if url.path == "/sim":
                 return self.send_json(200, board.simulate(args))
             if url.path == "/api" or url.path.startswith("/api/"):

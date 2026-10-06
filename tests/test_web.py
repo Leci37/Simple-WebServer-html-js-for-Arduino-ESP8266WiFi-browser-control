@@ -76,6 +76,17 @@ def test_block_examples_only_use_blocks_that_exist():
         palette = re.search(r"blocks: \[([^\]]*)\]", text).group(1)
         used = set(re.findall(r'"(\w+)"', palette)) | set(re.findall(r'type: "(\w+)"', text))
         assert used <= blocks, f"{script} usa bloques que no existen: {used - blocks}"
+    # El juego trae sus propios bloques (B.when_game = {…}), los suma a los de
+    # bloques.js antes de montar su editor y los usa en su paleta y su ejemplo.
+    game = (WEB / "juego.js").read_text(encoding="utf-8")
+    own = set(re.findall(r"^    B\.(\w+) = \{\n      cat:", game, re.M))
+    assert {"when_game", "wait_game", "if_power"} <= own
+    # Sólo lo que va a Bloques.mount: en el resto del juego, «type:» es otra cosa.
+    mount = re.search(r"Bloques\.mount\(.*?\n    \}\);", game, re.S).group(0)
+    palette = re.search(r"blocks: \[([^\]]*)\]", mount).group(1)
+    used = set(re.findall(r'"(\w+)"', palette)) | set(re.findall(r'type: "(\w+)"', mount))
+    assert own <= used, f"juego.js define bloques que su paleta no ofrece: {own - used}"
+    assert used <= blocks | own, f"juego.js usa bloques que no existen: {used - blocks - own}"
 
 
 def test_the_version_is_the_same_everywhere():

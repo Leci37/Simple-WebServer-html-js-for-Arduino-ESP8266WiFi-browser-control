@@ -35,15 +35,15 @@ def test_the_board_starts_with_no_records(sim):
 def test_a_record_says_its_place_and_only_the_best_five_stay(sim):
     code, body = record(sim, "Rayo", 300)
     assert code == 200 and body["place"] == 1
-    assert body["records"] == [{"alias": "Rayo", "m": 300, "t": 0, "w": "campo"}]
+    assert body["records"] == [{"alias": "Rayo", "m": 300, "t": 0, "w": "field"}]
     for alias, m in (("Pulga", 100), ("Trueno", 500), ("Muelle", 200), ("Turbo", 400)):
         record(sim, alias, m)
-    code, body = record(sim, "Cometa", 250, t=1, w="luna")
+    code, body = record(sim, "Cometa", 250, t=1, w="moon")
     assert body["place"] == 4
     assert [(r["alias"], r["m"]) for r in body["records"]] == [
         ("Trueno", 500), ("Turbo", 400), ("Rayo", 300), ("Cometa", 250), ("Muelle", 200)
     ]
-    assert body["records"][3] == {"alias": "Cometa", "m": 250, "t": 1, "w": "luna"}
+    assert body["records"][3] == {"alias": "Cometa", "m": 250, "t": 1, "w": "moon"}
     # Con menos metros que el quinto no entra, y la lista no cambia.
     code, body = record(sim, "Lento", 150)
     assert code == 200 and body["place"] == 0
@@ -66,6 +66,7 @@ def test_aliases_are_cleaned_like_the_game_does(sim):
         "abcdefghijk   z": "abcdefghijk ",  # como .trim().slice(0, 12) en el juego
         "abcdefghijkl    ": "abcdefghijkl",
         "Tab\tEnter\n": "TabEnter",
+        "Ra\u0085yo\u009f": "Rayo",  # también los controles de U+0080 a U+009F
     }
     for alias, clean in cases.items():
         sim.api("/api/records?clear=1")
@@ -81,10 +82,44 @@ def test_a_record_needs_an_alias_meters_and_a_known_world(sim):
     assert record(sim, "Rayo", 0) == (400, {"error": error})
     assert record(sim, "Rayo", -5) == (400, {"error": error})
     assert sim.get("/api/record?alias=Rayo")[0] == 400
-    assert record(sim, "Rayo", 10, w="marte") == (400, {"error": "w tiene que ser campo, granja o luna"})
+    assert record(sim, "Rayo", 10, w="marte") == (400, {"error": "w tiene que ser field, farm o moon"})
+    # Un «w=» vacío también es un mundo que no existe (en la placa, hasArg("w") es cierto).
+    assert record(sim, "Rayo", 10, w="") == (400, {"error": "w tiene que ser field, farm o moon"})
     # Sin mundo es el campo; los metros, como mucho 999999.
     code, body = record(sim, "Rayo", 10**9)
-    assert code == 200 and body["records"][0] == {"alias": "Rayo", "m": 999999, "t": 0, "w": "campo"}
+    assert code == 200 and body["records"][0] == {"alias": "Rayo", "m": 999999, "t": 0, "w": "field"}
+
+
+def test_meters_are_read_like_the_board_reads_numbers(sim):
+    # La placa lee los números con atol(): los dígitos del principio.
+    for sent, kept in (("906metros", 906), ("1e3", 1), ("12.9", 12)):
+        sim.api("/api/records?clear=1")
+        code, body = sim.get(f"/api/record?alias=Rayo&m={sent}")
+        assert code == 200 and body["records"][0]["m"] == kept, sent
+    assert sim.get("/api/record?alias=Rayo&m=inf") == (400, {"error": "hace falta un alias y los metros"})
+    # Si se repite, manda el primero, como server.arg() en la placa.
+    sim.api("/api/records?clear=1")
+    assert sim.get("/api/record?alias=Uno&alias=Dos&m=5")[1]["records"][0]["alias"] == "Uno"
+
+
+def test_hand_typed_urls_are_read_like_the_board_reads_them(sim):
+    # Como urlDecode() de ESP8266WebServer: un «%» con dos letras detrás es
+    # siempre un byte (0 si no son hexadecimales, y la placa lo tira del alias).
+    for query, alias in (
+        ("alias=50%off&m=5", "50f"),
+        ("alias=Ana%4g&m=5", "Ana"),
+        ("alias=50%&m=5", "50%"),
+        ("alias=%C3%B1and%C3%BA+veloz&m=5", "ñandú veloz"),
+        ("alias=Rayo;m=5", "Rayo"),  # también separa con «;»
+    ):
+        sim.api("/api/records?clear=1")
+        code, body = sim.get("/api/record?" + query)
+        assert code == 200 and body["records"][0]["alias"] == alias, query
+    assert sim.get("/api/record?alias=%zz&m=5") == (400, {"error": "hace falta un alias y los metros"})
+    # Para comparar, la placa usa strcmp(), que se para en el 0.
+    sim.api("/api/records?clear=1")
+    assert sim.get("/api/record?alias=Rayo&m=5&w=farm%00x")[1]["records"][0]["w"] == "farm"
+    assert sim.get("/api/record?alias=Rayo&m=5&w")[0] == 400  # un «w» sin «=» también está
 
 
 def test_records_can_be_cleared(sim):
@@ -115,9 +150,11 @@ def test_the_records_rules_are_the_same_in_firmware_and_simulator():
 
 
 def test_the_worlds_are_the_ones_the_game_has():
+    # El juego llama a sus mundos en español; la API, en inglés (WORLD_API).
     game = (ROOT / "web" / "juego.js").read_text(encoding="utf-8")
-    order = re.search(r"var WORLD_ORDER = \[([^\]]*)\]", game).group(1)
-    assert re.findall(r'"(\w+)"', order) == simulador.WORLD_NAMES
+    order = re.findall(r'"(\w+)"', re.search(r"var WORLD_ORDER = \[([^\]]*)\]", game).group(1))
+    api = dict(re.findall(r'(\w+): "(\w+)"', re.search(r"var WORLD_API = \{([^}]*)\}", game).group(1)))
+    assert [api[world] for world in order] == simulador.WORLD_NAMES
 
 
 HARNESS = r"""
@@ -150,6 +187,7 @@ def corpus() -> list[bytes]:
     words = [
         "Rayo", "  Cometa  ", "ñandú", "Bólido", "🦖🦖🦖🦖🦖🦖🦖🦖🦖🦖🦖🦖🦖", "a&b<c>d\"e", "uno dos tres cuatro",
         "abcdefghijk   z", "abcdefghijkl    ", "      ", "", "�hola", "Tab\tEnter\n\x7f", "日本語のエイリアスです",
+        "a\u0080b\u009fc\u00a0d",
     ]
     cases = [w.encode("utf-8") for w in words]
     # Lo que no es UTF-8: cortado, demasiado largo, mitades de UTF-16, más allá de U+10FFFF…

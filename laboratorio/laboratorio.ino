@@ -1,9 +1,11 @@
 // 🧪 Laboratorio de inventos — para la placa NodeMCU (ESP8266).
 //
-// Tres inventos en una sola placa:
+// Tres inventos y un juego en una sola placa:
 //   🚦 el semáforo, con su botón de peatones;
 //   🎤 el sonómetro: el semáforo dice cuánto ruido hay;
-//   👻 el detector de fantasmas: un radar que avisa cuando algo se acerca.
+//   👻 el detector de fantasmas: un radar que avisa cuando algo se acerca;
+//   🎮 ¡Salta, Chispa!, que se juega con el botón, palmadas o la mano, y
+//      cuyos récords de la clase guarda la placa.
 // Se juega y se programa con bloques desde el móvil o la tableta: la web
 // vive dentro de la placa.
 //
@@ -67,4 +69,5 @@ void loop() {
   soundLoop();
   ghostLoop();
   lightsLoop();
+  recordsLoop();
 }

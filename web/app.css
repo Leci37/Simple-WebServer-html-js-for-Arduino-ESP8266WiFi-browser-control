@@ -2673,6 +2673,26 @@ code {
   font-size: 0.75rem;
 }
 
+/* Y el cartel del inicio, con el mundo y sus flechas, tampoco cabría. */
+[data-width="xs"] .overlay-box {
+  max-width: calc(100% - 12px);
+  padding: 12px 10px;
+}
+
+[data-width="xs"] .world-pick {
+  gap: 4px;
+}
+
+[data-width="xs"] .world-pick span {
+  min-width: 0;
+  padding: 6px 10px;
+}
+
+[data-width="xs"] .wp-arrow {
+  width: 38px;
+  height: 38px;
+}
+
 /* Idea 1 y 9: cuántos jugáis y a qué velocidad, en las esquinas del cartel. */
 .ov-corners[hidden] {
   display: none;

@@ -45,11 +45,13 @@ inline size_t utf8Length(const uint8_t* s, size_t left) {
   return n;
 }
 
-// La letra que se tira aunque sea válida: <>"&, los caracteres de control y
-// U+FFFD, el «?» con que se sustituye lo que no se entiende (así la placa y el
-// simulador, que lo recibe ya sustituido, dejan el mismo alias).
+// La letra que se tira aunque sea válida: <>"&, los caracteres de control (los
+// de siempre, DEL y los de U+0080 a U+009F) y U+FFFD, el «?» con que se
+// sustituye lo que no se entiende (así la placa y el simulador, que lo recibe
+// ya sustituido, dejan el mismo alias).
 inline bool aliasDrops(const uint8_t* s, size_t n) {
   if (n == 1) return s[0] < 0x20 || s[0] == 0x7F || strchr("<>\"&", s[0]) != NULL;
+  if (n == 2) return s[0] == 0xC2 && s[1] <= 0x9F;
   return n == 3 && s[0] == 0xEF && s[1] == 0xBF && s[2] == 0xBD;
 }
 

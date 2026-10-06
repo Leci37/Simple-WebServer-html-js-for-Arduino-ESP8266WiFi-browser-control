@@ -398,17 +398,22 @@ document.addEventListener("DOMContentLoaded", function () {
       duelSay("🏆 ¡Gana el equipo <b>" + TEAM[champ] + "</b>, " + Math.max(p.red, p.green) + " a " + Math.min(p.red, p.green) + "!");
       Lab.confetti();
       Lab.toast("¡Gana el equipo " + TEAM[champ] + "! 🏆");
-      // La luz del equipo que gana parpadea.
+      // La luz del equipo que gana parpadea… salvo que ya haya empezado la
+      // revancha: entonces la luz es suya, y el parpadeo se corta.
+      var blink = function (on) {
+        if (duel !== end) throw new Error("revancha");
+        return Lab.api("light", { color: champ, on: on });
+      };
       for (var i = 0; i < 4; i++) {
         chain = chain
           .then(function () {
-            return Lab.api("light", { color: champ, on: 0 });
+            return blink(0);
           })
           .then(function () {
             return Lab.sleep(220);
           })
           .then(function () {
-            return Lab.api("light", { color: champ, on: 1 });
+            return blink(1);
           })
           .then(function () {
             return Lab.sleep(220);

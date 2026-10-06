@@ -36,10 +36,28 @@ def set_number(page, index: int, value: str):
     field.blur()
 
 
-@pytest.mark.parametrize("path", ["/", "/semaforo", "/sonometro", "/fantasmas", "/juego"])
+@pytest.mark.parametrize(
+    "path",
+    [
+        "/",
+        "/semaforo",
+        "/sonometro",
+        "/fantasmas",
+        "/juego",
+        "/juego#programar",
+        "/juego#montar",
+        "/sonometro#programar",
+        "/sonometro#montar",
+        "/fantasmas#montar",
+        "/semaforo#montar",
+    ],
+)
 def test_every_page_opens_and_finds_the_board(open_page, path):
     page = open_page(path)
     assert page.locator("[data-board-name]").first.inner_text() == "Laboratorio-SIM"
+    if "#" in path:
+        # Con #programar o #montar en el enlace, la página abre en esa pestaña.
+        assert page.locator(f"#panel-{path.split('#')[1]}").is_visible()
 
 
 def test_the_home_page_leads_to_the_three_inventions(open_page):
@@ -189,7 +207,22 @@ def test_the_wiring_diagram_draws_the_board(open_page):
 
 
 @pytest.mark.parametrize(
-    "path", ["/", "/semaforo", "/semaforo#programar", "/semaforo#montar", "/sonometro", "/fantasmas", "/fantasmas#programar", "/juego"]
+    "path",
+    [
+        "/",
+        "/semaforo",
+        "/semaforo#programar",
+        "/semaforo#montar",
+        "/sonometro",
+        "/fantasmas",
+        "/fantasmas#programar",
+        "/juego",
+        "/juego#programar",
+        "/juego#montar",
+        "/sonometro#programar",
+        "/sonometro#montar",
+        "/fantasmas#montar",
+    ],
 )
 def test_nothing_sticks_out_on_a_small_phone(open_page, path):
     # Un móvil pequeño (360 px): la página no se puede salir por los lados.

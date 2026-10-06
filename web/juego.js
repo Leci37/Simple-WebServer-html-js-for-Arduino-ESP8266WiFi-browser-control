@@ -80,6 +80,9 @@
     },
   };
   var WORLD_ORDER = ["campo", "granja", "luna"];
+  // En la API de la placa (los récords de la clase) los mundos van en inglés,
+  // como el resto de sus nombres.
+  var WORLD_API = { campo: "field", granja: "farm", luna: "moon" };
 
   // v3 (idea 2): Chispas de colores, que se abren juntando rayos.
   var SKINS = [
@@ -531,13 +534,14 @@
     if (item.power === "escudo") {
       g.shield = true;
       g.shields += 1;
-      if (g.shields >= 3) earn("escudos");
     }
     if (item.power === "cohete") g.rocket = g.boss ? 14 : 8;
     if (item.power === "reloj") g.slow = 6;
     sparkle(item.x, item.y, POWERS[item.power].color);
     banner(POWERS[item.power].label, 1.8);
     sfx("power");
+    // Después del cartel del poder: el de la pegatina nueva no se tiene que tapar.
+    if (g.shields >= 3) earn("escudos");
   }
 
   // ---------- Cada fotograma ----------
@@ -820,7 +824,8 @@
   function duckWanted() {
     if (autopilot || g.mode === "demo") return !!g.autoDuck;
     var i = g.who === 2 ? 1 : 0;
-    return duckHeld[i] || (i === 0 && duckHand && (!!duo || mandos.mano));
+    // Con dos jugadores, la mano no cuenta (ni para saltar ni para agacharse).
+    return duckHeld[i] || (i === 0 && duckHand && !duo && mandos.mano);
   }
 
   // Al acabar: los rayos van a la hucha (abren Chispas) y se mira si la
@@ -830,7 +835,17 @@
     addToBank(g.bolts);
     g.classPlace = classPlace(meters());
     g.classSaved = false;
+    g.classSkipped = false;
     g.pendingAlias = g.classPlace > 0;
+    // Desde otra tableta pueden haber entrado otros (o la lista se ha borrado):
+    // se vuelve a pedir, y se mira otra vez si entra.
+    var game = g;
+    loadClass().then(function () {
+      if (game !== g || game.classSaved || game.classSkipped) return;
+      game.classPlace = classPlace(meters());
+      game.pendingAlias = game.classPlace > 0;
+      paintClass();
+    });
   }
 
   function addToBank(bolts) {
@@ -878,7 +893,7 @@
 
   function saveClass(alias) {
     var game = g;
-    var entry = { alias: alias, m: meters(), t: g.turtle ? 1 : 0, w: g.world };
+    var entry = { alias: alias, m: meters(), t: g.turtle ? 1 : 0, w: WORLD_API[g.world] };
     return Lab.api("record", entry)
       .then(function (r) {
         classRec = { list: r.records || [], where: "placa" };
@@ -897,18 +912,29 @@
         return place <= 5 ? place : 0;
       })
       .then(function (place) {
-        game.classSaved = place || true;
+        // Puesto 0: mientras se jugaba, otros hicieron más metros.
+        game.classSaved = place || false;
         game.pendingAlias = false;
+        if (!place) Lab.toast("Esta vez no entras: mientras jugabas, otros han llegado más lejos");
         Lab.store.set("juego.alias", alias);
         paintClass();
       });
+  }
+
+  // El mundo del juego que la placa llama así (o el mismo nombre, si no es de la placa).
+  function worldFromApi(name) {
+    for (var key in WORLD_API) {
+      if (WORLD_API[key] === name) return key;
+    }
+    return name;
   }
 
   function classRows(mine) {
     if (!classRec.list.length) return '<li class="empty"><span></span><span>Todavía nadie. ¡Estrénalos!</span><span></span></li>';
     return classRec.list
       .map(function (r, i) {
-        var tags = (r.t ? " 🐢" : "") + (r.w && r.w !== "campo" && WORLDS[r.w] ? " " + WORLDS[r.w].emoji : "");
+        var w = worldFromApi(r.w);
+        var tags = (r.t ? " 🐢" : "") + (w && w !== "campo" && WORLDS[w] ? " " + WORLDS[w].emoji : "");
         return "<li" + (mine === i + 1 ? ' class="me"' : "") + "><span>" + (i + 1) + "</span><span>" + esc(r.alias) + tags + "</span><span>" + r.m + " m</span></li>";
       })
       .join("");
@@ -953,12 +979,14 @@
       input.value = ALIASES[Math.floor(Math.random() * ALIASES.length)];
     });
     Lab.$("[data-skip]", box).addEventListener("click", function () {
+      g.classSkipped = true;
       g.pendingAlias = false;
       paintSide(box);
     });
     form.addEventListener("submit", function (e) {
       e.preventDefault();
-      var alias = input.value.replace(/[<>"&]/g, "").trim().slice(0, 12);
+      // Como la placa (laboratorio/alias.h): sin <>"&, sin caracteres de control y sin «�».
+      var alias = input.value.replace(/[<>"&\u0000-\u001f\u007f-\u009f\ufffd]/g, "").trim().slice(0, 12);
       if (!alias) {
         input.focus();
         return Lab.toast("Escribe un alias (o pulsa 🎲)");
@@ -2313,7 +2341,7 @@
     var frameEl = Lab.$("#frame");
     if (frameEl) frameEl.setAttribute("data-size", box.height < 270 ? "s" : box.height < 360 ? "m" : "l");
     // Y a lo ancho: en un móvil de pie, las dos esquinas del inicio no caben con todo su texto.
-    if (frameEl) frameEl.setAttribute("data-width", box.width < 380 ? "xs" : box.width < 560 ? "s" : "l");
+    if (frameEl) frameEl.setAttribute("data-width", box.width < 350 ? "xs" : box.width < 560 ? "s" : "l");
   }
 
   // ---------- Sonidos (en el móvil o el ordenador) ----------
@@ -2418,8 +2446,9 @@
   function boardEvent(event) {
     // v2: si corre un programa de bloques, las luces son suyas.
     if (!Lab.online || g.mode === "demo" || programaActivo) return;
-    // Con la palmada encendida, la placa no pita: el micrófono se oiría a sí mismo.
-    var beeps = !mandos.palmada;
+    // Con la palmada encendida (o con dos jugadores: el 2 salta con palmadas), la
+    // placa no pita: el micrófono se oiría a sí mismo.
+    var beeps = !mandos.palmada && !duo;
     var steps = {
       start: [["light", { color: "all", on: 0 }], ["light", { color: "green", on: 1 }]],
       power: [["light", { color: "yellow", on: 1 }]].concat(beeps ? [["beep", { hz: 1047, ms: 120 }]] : []),

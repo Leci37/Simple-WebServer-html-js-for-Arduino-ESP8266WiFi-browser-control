@@ -3,8 +3,10 @@
 // Viven en la memoria flash de la placa (la «EEPROM» que trae el núcleo
 // ESP8266, sin librerías aparte): duran aunque se desenchufe y aunque se
 // vuelva a cargar el firmware. Se borran con /api/records?clear=1.
-// Sólo se escribe cuando alguien entra entre los cinco: la flash aguanta
-// muchas escrituras, pero no infinitas.
+// La flash aguanta muchas escrituras, pero no infinitas: sólo se escribe
+// cuando alguien entra entre los cinco, y como mucho una vez cada 10 segundos
+// (lo que llegue antes espera en la memoria; si justo entonces se desenchufa,
+// se pierde ese último).
 #pragma once
 
 #include <Arduino.h>
@@ -14,9 +16,12 @@
 
 const uint8_t RECORDS_MAX = 5;
 const uint32_t RECORD_METERS_MAX = 999999;
-// Los mundos del juego, en el orden de WORLD_ORDER de web/juego.js.
-const char* const WORLD_NAMES[] = {"campo", "granja", "luna"};
+// Los mundos del juego (campo, granja y luna), como los llama la API: en el
+// orden de WORLD_ORDER y con los nombres de WORLD_API de web/juego.js.
+const char* const WORLD_NAMES[] = {"field", "farm", "moon"};
 const uint8_t WORLD_COUNT = sizeof(WORLD_NAMES) / sizeof(WORLD_NAMES[0]);
+// Así, aunque un programa mande récords en bucle, la flash no se gasta.
+const unsigned long RECORDS_SAVE_GAP_MS = 10000;
 // Si la flash no empieza por esto, está sin estrenar (o era de otro programa).
 const uint32_t RECORDS_MAGIC = 0x5245434C;  // "RECL", y la L de laboratorio
 
@@ -34,6 +39,9 @@ struct RecordTable {
 };
 
 RecordTable records;
+bool recordsDirty = false;      // hay cambios que aún no están en la flash
+bool recordsSavedOnce = false;  // ya se ha escrito alguna vez desde que arrancó
+unsigned long recordsSavedAt = 0;
 
 // El número del mundo que se llama así, o -1 si no hay ninguno.
 int worldFromName(const String& name) {
@@ -46,6 +54,20 @@ int worldFromName(const String& name) {
 void recordsSave() {
   EEPROM.put(0, records);
   EEPROM.commit();
+  recordsDirty = false;
+  recordsSavedOnce = true;
+  recordsSavedAt = millis();
+}
+
+// Algo ha cambiado: a la flash ya, o en cuanto pasen los 10 segundos.
+void recordsChanged() {
+  recordsDirty = true;
+  if (!recordsSavedOnce || millis() - recordsSavedAt >= RECORDS_SAVE_GAP_MS) recordsSave();
+}
+
+// En cada vuelta de loop(): lo que estaba esperando, a la flash.
+void recordsLoop() {
+  if (recordsDirty && millis() - recordsSavedAt >= RECORDS_SAVE_GAP_MS) recordsSave();
 }
 
 void recordsBegin() {
@@ -79,7 +101,7 @@ uint8_t recordsAdd(const char* alias, uint32_t meters, bool turtle, uint8_t worl
   record.turtle = turtle ? 1 : 0;
   record.world = world < WORLD_COUNT ? world : 0;
   if (records.count < RECORDS_MAX) records.count++;
-  recordsSave();
+  recordsChanged();
   return at + 1;
 }
 
@@ -87,5 +109,5 @@ void recordsClear() {
   if (records.count == 0) return;
   memset(records.list, 0, sizeof(records.list));
   records.count = 0;
-  recordsSave();
+  recordsChanged();
 }

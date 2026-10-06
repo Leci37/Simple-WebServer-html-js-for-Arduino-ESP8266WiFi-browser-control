@@ -656,7 +656,13 @@
       drag.from.list.splice(drag.from.index, 0, drag.node);
     } else if (drag.drop) {
       var list = drag.drop.list === "root" ? this.program : findNode(this.program, drag.drop.list).node.body;
-      list.splice(drag.drop.index, 0, drag.node);
+      var index = drag.drop.index;
+      // Un «cuando…» va siempre suelto arriba, aunque se suelte dentro de otro bloque.
+      if (BLOCKS[drag.node.type].hat && list !== this.program) {
+        list = this.program;
+        index = list.length;
+      }
+      list.splice(index, 0, drag.node);
     } else if (drag.from) {
       Lab.toast("Bloque quitado 🗑️");
     }
@@ -729,13 +735,24 @@
       var rest = this.program.filter(function (n) {
         return !BLOCKS[n.type].hat;
       });
+      // Si una rama falla o se para, se paran todas, y se espera a que acaben de
+      // verdad: una orden que aún iba de camino seguiría tras otro «▶».
+      var failure = null;
       await Promise.all(
-        [this.runList(rest)].concat(
-          hats.map(function (n) {
-            return self.runList([n]);
+        [rest]
+          .concat(
+            hats.map(function (n) {
+              return [n];
+            })
+          )
+          .map(function (list) {
+            return self.runList(list).catch(function (err) {
+              if (failure === null || failure === STOP) failure = err;
+              if (!self.stopped) self.stop();
+            });
           })
-        )
       );
+      if (failure !== null) throw failure;
       this.say("✓ ¡Terminado! ¿Lo cambias y lo pruebas otra vez?");
     } catch (err) {
       if (!this.stopped) this.stop();

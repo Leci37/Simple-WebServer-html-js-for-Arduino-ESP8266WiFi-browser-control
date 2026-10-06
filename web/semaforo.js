@@ -39,7 +39,9 @@ document.addEventListener("DOMContentLoaded", function () {
       btn.classList.toggle("selected", Number(btn.getAttribute("data-speed")) === state.settings.trafficSpeed);
     });
     $("#speed-box").hidden = state.mode !== "auto";
-    if (!(editor && editor.running) && !rlBusy()) chat(state, go);
+    // Al acabar «Luz roja, luz verde», Chispa celebra hasta que el semáforo vuelve a ir solo.
+    var cheering = rl && rl.phase === "end" && Date.now() < rl.quietUntil;
+    if (!(editor && editor.running) && !rlBusy() && !cheering) chat(state, go);
     last = state;
   }
 
@@ -89,6 +91,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   var GOAL_CM = 12;
   var MOVE_CM = 6;
+  var BACK_TO_AUTO_MS = 2500; // al acabar, el semáforo vuelve a ir solo
   var rl = null;
   var rlRecord = Lab.store.get("semaforo.luzroja", null);
   paintRlRecord();
@@ -150,7 +153,7 @@ document.addEventListener("DOMContentLoaded", function () {
     if (rlBusy()) return rlEnd(null);
     var cm = Lab.state ? Lab.state.ghost.cm : -1;
     if (cm < 0) return Lab.toast("📏 No te veo: ponte delante del sensor de distancia");
-    if (cm < 40) return Lab.toast("📏 Aléjate un poco: a más de 40 cm de la placa");
+    if (cm <= 40) return Lab.toast("📏 Aléjate un poco: a más de 40 cm de la placa");
     rl = { startCm: cm, t0: Date.now(), caught: 0, phase: "" };
     this.textContent = "■ Parar";
     Lab.poll(150);
@@ -189,6 +192,7 @@ document.addEventListener("DOMContentLoaded", function () {
   function rlEnd(secs) {
     var was = rl;
     rl.phase = "end";
+    rl.quietUntil = Date.now() + BACK_TO_AUTO_MS;
     $("#rl-btn").textContent = "¡Otra vez!";
     Lab.poll(350);
     if (secs === null) {
@@ -210,7 +214,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Al acabar, el semáforo vuelve a ir solo.
     setTimeout(function () {
       if (rl === was) Lab.api("mode", { set: "auto" }).catch(function () {});
-    }, 2500);
+    }, BACK_TO_AUTO_MS);
   }
 
   var editor = Bloques.mount($("#editor"), {

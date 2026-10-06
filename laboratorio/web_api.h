@@ -196,7 +196,7 @@ void handleRecords() {
   sendJson(200, json);
 }
 
-// /api/record?alias=Rayo&m=906&t=0&w=campo: un récord nuevo (t=1, en modo
+// /api/record?alias=Rayo&m=906&t=0&w=field: un récord nuevo (t=1, en modo
 // tortuga; w, el mundo). Contesta con la lista y el puesto (0 si no entra).
 void handleRecord() {
   char alias[ALIAS_SIZE];
@@ -211,7 +211,7 @@ void handleRecord() {
   if (server.hasArg("w")) {
     world = worldFromName(server.arg("w"));
     if (world < 0) {
-      sendError(400, "w tiene que ser campo, granja o luna");
+      sendError(400, "w tiene que ser field, farm o moon");
       return;
     }
   }
@@ -236,7 +236,7 @@ void handleApiHelp() {
            "\"GET /api/settings?soundYellow=45&soundRed=70&soundGain=100&soundAlarm=0"
            "&ghostNear=20&ghostFar=60&ghostSound=1&trafficSpeed=2\","
            "\"GET /api/records (clear=1 los borra)\","
-           "\"GET /api/record?alias=Rayo&m=906&t=0&w=campo|granja|luna\""
+           "\"GET /api/record?alias=Rayo&m=906&t=0&w=field|farm|moon\""
            "]}");
 }
 
